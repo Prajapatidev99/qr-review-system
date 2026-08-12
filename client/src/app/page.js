@@ -201,7 +201,7 @@ export default function HomePage() {
   const sectionTitle = (text, sub) => (
     <div style={{ textAlign: 'center', marginBottom: 56 }}>
       <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700, letterSpacing: '-0.03em', color: '#fff' }}>{text}</h2>
-      <p style={{ color: '#888', fontSize: '1.05rem', marginTop: 10, maxWidth: 560, margin: '10px auto 0' }}>{sub}</p>
+      <p style={{ color: '#b0b0b0', fontSize: '1.05rem', marginTop: 10, maxWidth: 560, margin: '10px auto 0' }}>{sub}</p>
     </div>
   );
 
@@ -239,9 +239,9 @@ export default function HomePage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            <a href="#features" style={{ color: '#888', fontSize: '0.875rem', fontWeight: 500, transition: 'color 0.2s' }}>Features</a>
-            <a href="#how-it-works" style={{ color: '#888', fontSize: '0.875rem', fontWeight: 500 }}>How it works</a>
-            <a href="#pricing" style={{ color: '#888', fontSize: '0.875rem', fontWeight: 500 }}>Pricing</a>
+            <a href="#features" style={{ color: '#b0b0b0', fontSize: '0.875rem', fontWeight: 500, transition: 'color 0.2s' }}>Features</a>
+            <a href="#how-it-works" style={{ color: '#b0b0b0', fontSize: '0.875rem', fontWeight: 500 }}>How it works</a>
+            <a href="#pricing" style={{ color: '#b0b0b0', fontSize: '0.875rem', fontWeight: 500 }}>Pricing</a>
             <Link href="/admin/login" style={{
               padding: '8px 20px', borderRadius: 8, border: '1px solid #333', background: '#111',
               color: '#fff', fontSize: '0.875rem', fontWeight: 600, transition: 'all 0.2s',
@@ -270,7 +270,7 @@ export default function HomePage() {
             <span style={{ color: '#10b981' }}>5-star Google review.</span>
           </h1>
 
-          <p style={{ fontSize: '1.1rem', color: '#888', lineHeight: 1.7, maxWidth: 640, margin: '0 auto 40px' }}>
+          <p style={{ fontSize: '1.1rem', color: '#c0c0c0', lineHeight: 1.7, maxWidth: 640, margin: '0 auto 40px' }}>
             Smart QR codes for restaurants, salons, clinics & retail. AI-generated review suggestions in English, Hindi & Gujarati. Zero Google gating risk.
           </p>
 
@@ -311,7 +311,7 @@ export default function HomePage() {
                 <div style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.03em' }}>
                   {stat.value.toLocaleString()}{stat.suffix}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#666', marginTop: 4, fontWeight: 500 }}>{stat.label}</div>
+                <div style={{ fontSize: '0.8rem', color: '#999', marginTop: 4, fontWeight: 500 }}>{stat.label}</div>
               </div>
             ))}
           </div>
@@ -419,7 +419,7 @@ export default function HomePage() {
                   <s.icon size={22} />
                 </div>
                 <h3 style={{ fontSize: '1.15rem', fontWeight: 700, marginBottom: 8 }}>{s.title}</h3>
-                <p style={{ fontSize: '0.88rem', color: '#888', lineHeight: 1.6 }}>{s.desc}</p>
+                <p style={{ fontSize: '0.88rem', color: '#b0b0b0', lineHeight: 1.6 }}>{s.desc}</p>
               </div>
             ))}
           </div>
@@ -447,7 +447,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: 6 }}>{f.title}</h3>
-                  <p style={{ fontSize: '0.85rem', color: '#888', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
+                  <p style={{ fontSize: '0.85rem', color: '#b0b0b0', lineHeight: 1.6, margin: 0 }}>{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -470,12 +470,12 @@ export default function HomePage() {
                     <Star key={s} size={16} fill="#f59e0b" color="#f59e0b" />
                   ))}
                 </div>
-                <p style={{ fontSize: '0.9rem', color: '#ccc', lineHeight: 1.6, marginBottom: 16, fontStyle: 'italic' }}>
+                <p style={{ fontSize: '0.9rem', color: '#e0e0e0', lineHeight: 1.6, marginBottom: 16, fontStyle: 'italic' }}>
                   &ldquo;{t.quote}&rdquo;
                 </p>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t.name}</div>
-                  <div style={{ fontSize: '0.78rem', color: '#666' }}>{t.biz}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#999' }}>{t.biz}</div>
                 </div>
               </div>
             ))}
@@ -510,17 +510,17 @@ export default function HomePage() {
                 <h3 style={{ fontSize: '1.1rem', fontWeight: 700 }}>{p.name}</h3>
                 <div style={{ margin: '14px 0 18px' }}>
                   <span style={{ fontSize: '2rem', fontWeight: 800 }}>{p.price}</span>
-                  <span style={{ color: '#666', fontSize: '0.85rem' }}> {p.period}</span>
+                  <span style={{ color: '#999', fontSize: '0.85rem' }}> {p.period}</span>
                 </div>
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', flex: 1 }}>
-                  <li style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#ccc' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#e0e0e0' }}>
                     <CheckCircle2 size={14} color="#10b981" /> {p.bz}
                   </li>
-                  <li style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#ccc' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#e0e0e0' }}>
                     <CheckCircle2 size={14} color="#10b981" /> {p.scans}
                   </li>
                   {p.feat.map((ft, fi) => (
-                    <li key={fi} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#888' }}>
+                    <li key={fi} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', marginBottom: 8, color: '#b0b0b0' }}>
                       <CheckCircle2 size={14} color="#333" /> {ft}
                     </li>
                   ))}
@@ -549,7 +549,7 @@ export default function HomePage() {
             <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 12 }}>
               Ready to grow your Google reviews?
             </h2>
-            <p style={{ color: '#888', fontSize: '1rem', marginBottom: 28, maxWidth: 480, margin: '0 auto 28px' }}>
+            <p style={{ color: '#c0c0c0', fontSize: '1rem', marginBottom: 28, maxWidth: 480, margin: '0 auto 28px' }}>
               Join 500+ Indian businesses already using QR Review to boost their online reputation.
             </p>
             <Link href="/admin/login" style={{
@@ -571,9 +571,9 @@ export default function HomePage() {
                 width: 28, height: 28, borderRadius: '50%', background: '#111', border: '1px solid #333',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.65rem'
               }}>QR</div>
-              <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#888' }}>QR Review System</span>
+              <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#999' }}>QR Review System</span>
             </div>
-            <p style={{ color: '#444', fontSize: '0.8rem' }}>© {new Date().getFullYear()} QR Review. Designed for local businesses in India.</p>
+            <p style={{ color: '#777', fontSize: '0.8rem' }}>© {new Date().getFullYear()} QR Review. Designed for local businesses in India.</p>
           </div>
         </footer>
 

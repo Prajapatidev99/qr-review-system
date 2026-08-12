@@ -10,6 +10,54 @@ import {
   Phone, MapPin, X, Gift, ChevronRight, RefreshCw, Sparkles
 } from 'lucide-react';
 
+// Universal cross-browser copy helper (works on iOS, Android, Windows, Mac, HTTP, HTTPS)
+const copyToClipboard = async (text) => {
+  if (!text) return false;
+  let success = false;
+
+  // 1. Modern API (HTTPS)
+  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      success = true;
+    } catch (e) {
+      success = false;
+    }
+  }
+
+  // 2. Universal ExecCommand fallback (iOS, Android, HTTP, legacy webviews)
+  if (!success && typeof document !== 'undefined') {
+    try {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.top = '0';
+      textArea.style.left = '-9999px';
+      textArea.style.opacity = '0';
+      textArea.setAttribute('readonly', '');
+      document.body.appendChild(textArea);
+
+      if (navigator.userAgent.match(/ipad|iphone|ipod/i)) {
+        const range = document.createRange();
+        range.selectNodeContents(textArea);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+      } else {
+        textArea.select();
+      }
+
+      success = document.execCommand('copy');
+      document.body.removeChild(textArea);
+    } catch (e) {
+      success = false;
+    }
+  }
+
+  return success;
+};
+
 export default function ReviewPage() {
   const params = useParams();
   const slug = params.slug;
@@ -125,24 +173,13 @@ export default function ReviewPage() {
   const handleSelectSuggestion = async (s) => {
     setSelectedSuggestion(s);
 
-    // 1. Synchronously copy to clipboard (iOS Safari requirement)
-    try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(s);
-      } else {
-        // Fallback for older iOS webviews
-        const textArea = document.createElement('textarea');
-        textArea.value = s;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-      }
+    const isCopied = await copyToClipboard(s);
+    if (isCopied) {
       setCopied(true);
-      toast.success('Text Copied! 📋 Tap & hold on Google box to Paste 🚀', { duration: 4000 });
+      toast.success('Review Copied! 📋 Long-press on Google box to Paste 🚀', { duration: 4000 });
       setTimeout(() => setCopied(false), 4000);
-    } catch (e) {
-      toast.error('Copied to clipboard');
+    } else {
+      toast.success('Opening Google Reviews 🚀');
     }
 
     if (scanId) {
@@ -150,27 +187,23 @@ export default function ReviewPage() {
       scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
     }
 
-    // 2. Open Google Review link immediately for iOS Safari compatibility
     if (business?.googleReviewLink) {
       window.open(business.googleReviewLink, '_blank');
     }
   };
 
-  // Copy review text
+  // Copy review text manually
   const handleCopy = async () => {
     if (!selectedSuggestion) {
       toast.error('Please select a review first');
       return;
     }
-    try {
-      await navigator.clipboard.writeText(selectedSuggestion);
+    const isCopied = await copyToClipboard(selectedSuggestion);
+    if (isCopied) {
       setCopied(true);
-      if (scanId) {
-        scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => {});
-      }
-      setTimeout(() => setCopied(false), 3000);
-      toast.success(t('copied', lang));
-    } catch {
+      toast.success('Review Copied! 📋 Long-press on Google box to Paste');
+      setTimeout(() => setCopied(false), 4000);
+    } else {
       toast.error('Failed to copy');
     }
   };

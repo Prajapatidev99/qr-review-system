@@ -307,7 +307,7 @@ export default function HomePage() {
               <div key={i} ref={stat.ref} style={{
                 padding: '28px 16px', borderRight: i < 3 ? '1px solid #222' : 'none'
               }}>
-                <div style={{ color: '#10b981', marginBottom: 8 }}><stat.icon size={20} /></div>
+                <div style={{ color: '#fff', marginBottom: 8 }}><stat.icon size={20} /></div>
                 <div style={{ fontSize: '1.8rem', fontWeight: 700, letterSpacing: '-0.03em' }}>
                   {stat.value.toLocaleString()}{stat.suffix}
                 </div>
@@ -410,7 +410,7 @@ export default function HomePage() {
               <div key={i} style={{ ...card, position: 'relative' }}>
                 <div style={{
                   position: 'absolute', top: 20, right: 20, fontSize: '2.5rem', fontWeight: 800,
-                  color: '#1a1a1a', letterSpacing: '-0.05em'
+                  color: '#333', letterSpacing: '-0.05em'
                 }}>{s.step}</div>
                 <div style={{
                   width: 44, height: 44, borderRadius: 12, background: '#111', border: '1px solid #333',

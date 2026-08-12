@@ -238,8 +238,8 @@ export default function Component() {
 
         <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           {Logo}
-          <h1 style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "0.25rem", letterSpacing: "-0.025em" }}>Sign in to Admin</h1>
-          <p style={{ fontSize: "0.85rem", color: "#888", marginBottom: "1.25rem", lineHeight: 1.5 }}>Sign in to your Review System Dashboard.</p>
+          <h1 style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "0.25rem", letterSpacing: "-0.025em" }}>Welcome back</h1>
+          <p style={{ fontSize: "0.85rem", color: "#b0b0b0", marginBottom: "1.25rem", lineHeight: 1.5 }}>Sign in to manage your QR Review dashboard.</p>
 
           <form onSubmit={handleSubmit} style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
             <div style={{ textAlign: "left", width: "100%" }}>
@@ -247,7 +247,7 @@ export default function Component() {
               <input
                 style={inputStyle}
                 type="email"
-                placeholder="admin@yourdomain.com"
+                placeholder="you@business.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required

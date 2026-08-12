@@ -170,42 +170,36 @@ export default function ReviewPage() {
   }, [scanId, business, lang]);
 
   // Handle selecting a review suggestion — auto-copy and open Google Review link
-  const handleSelectSuggestion = async (s) => {
+  const handleSelectSuggestion = (s) => {
     setSelectedSuggestion(s);
 
-    const isCopied = await copyToClipboard(s);
-    if (isCopied) {
-      setCopied(true);
-      toast.success('Review Copied! 📋 Long-press on Google box to Paste 🚀', { duration: 4000 });
-      setTimeout(() => setCopied(false), 4000);
-    } else {
-      toast.success('Opening Google Reviews 🚀');
-    }
+    // 1. Synchronous copy attempt (prevents browser popup blocker)
+    copyToClipboard(s);
+    setCopied(true);
+    toast.success('Review Copied! 📋 Just tap & hold on Google to Paste ✨', { duration: 5000 });
 
     if (scanId) {
       scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => {});
       scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
     }
 
+    // 2. Open Google Review link synchronously
     if (business?.googleReviewLink) {
       window.open(business.googleReviewLink, '_blank');
     }
   };
 
   // Copy review text manually
-  const handleCopy = async () => {
+  const handleCopy = (e) => {
+    if (e) e.preventDefault();
     if (!selectedSuggestion) {
       toast.error('Please select a review first');
       return;
     }
-    const isCopied = await copyToClipboard(selectedSuggestion);
-    if (isCopied) {
-      setCopied(true);
-      toast.success('Review Copied! 📋 Long-press on Google box to Paste');
-      setTimeout(() => setCopied(false), 4000);
-    } else {
-      toast.error('Failed to copy');
-    }
+    copyToClipboard(selectedSuggestion);
+    setCopied(true);
+    toast.success('Review Copied! 📋 Long-press on Google to Paste');
+    setTimeout(() => setCopied(false), 4000);
   };
 
   // Handle Google review click

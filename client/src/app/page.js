@@ -31,12 +31,12 @@ export default function HomePage() {
         u_opacities: { value: [0.2, 0.2, 0.3, 0.4, 0.4, 0.5, 0.6, 0.6, 0.7, 0.9] },
         u_colors: {
           value: [
-            new THREE.Vector3(0.39, 0.4, 0.95),
-            new THREE.Vector3(0.5, 0.55, 0.98),
-            new THREE.Vector3(0.3, 0.7, 0.9),
-            new THREE.Vector3(0.6, 0.3, 0.9),
-            new THREE.Vector3(0.4, 0.5, 0.9),
-            new THREE.Vector3(0.8, 0.8, 1.0)
+            new THREE.Vector3(0.06, 0.72, 0.52),
+            new THREE.Vector3(0.02, 0.71, 0.83),
+            new THREE.Vector3(0.1, 0.8, 0.6),
+            new THREE.Vector3(0.05, 0.6, 0.75),
+            new THREE.Vector3(0.2, 0.85, 0.75),
+            new THREE.Vector3(0.1, 0.7, 0.9)
           ]
         },
         u_total_size: { value: 24.0 },
@@ -151,14 +151,14 @@ export default function HomePage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{
             width: 42, height: 42, borderRadius: 12,
-            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+            background: 'linear-gradient(135deg, #10b981, #06b6d4)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontWeight: 800, fontSize: '1.2rem', color: 'white',
-            boxShadow: '0 4px 16px rgba(99, 102, 241, 0.4)'
+            boxShadow: '0 4px 16px rgba(16, 185, 129, 0.4)'
           }}>
             <QrCode size={22} />
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff, #cbd5e1)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff, #67e8f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             QR Review
           </span>
         </div>
@@ -167,7 +167,7 @@ export default function HomePage() {
           <a href="#features" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', fontWeight: 500 }}>Features</a>
           <a href="#how-it-works" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', fontWeight: 500 }}>How it works</a>
           <a href="#pricing" style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem', fontWeight: 500 }}>Pricing</a>
-          <Link href="/admin/login" className="btn btn-primary btn-sm" style={{ borderRadius: 9999, padding: '10px 20px' }}>
+          <Link href="/admin/login" className="btn btn-primary btn-sm" style={{ borderRadius: 9999, padding: '10px 22px', background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)', color: '#ffffff', fontWeight: 700 }}>
             Admin Dashboard <ArrowRight size={14} />
           </Link>
         </div>
@@ -177,14 +177,14 @@ export default function HomePage() {
       <section style={{ textAlign: 'center', padding: '80px 20px 60px', maxWidth: 900, margin: '0 auto', position: 'relative' }}>
         <div style={{
           position: 'absolute', top: -50, left: '50%', transform: 'translateX(-50%)',
-          width: 500, height: 300, background: 'radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%)',
+          width: 500, height: 300, background: 'radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%)',
           filter: 'blur(80px)', pointerEvents: 'none'
         }} />
 
         <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 16px',
-          background: 'rgba(99, 102, 241, 0.12)', border: '1px solid rgba(99, 102, 241, 0.3)',
-          borderRadius: 9999, color: '#a5b4fc', fontSize: '0.85rem', fontWeight: 600, marginBottom: 24
+          display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 18px',
+          background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)',
+          borderRadius: 9999, color: '#34d399', fontSize: '0.88rem', fontWeight: 700, marginBottom: 24
         }}>
           <Sparkles size={14} /> AI-Powered Google Review Growth Engine
         </div>
@@ -192,7 +192,7 @@ export default function HomePage() {
         <h1 style={{
           fontSize: 'clamp(2.4rem, 5vw, 3.8rem)', fontWeight: 800, lineHeight: 1.15,
           letterSpacing: '-0.03em', marginBottom: 20,
-          background: 'linear-gradient(135deg, #ffffff 30%, #a5b4fc 70%, #818cf8 100%)',
+          background: 'linear-gradient(135deg, #ffffff 30%, #67e8f9 70%, #34d399 100%)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'
         }}>
           Turn Every Customer Scan Into a 5-Star Google Review.
@@ -203,10 +203,10 @@ export default function HomePage() {
         </p>
 
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/admin/login" className="btn btn-primary btn-lg" style={{ borderRadius: 9999, padding: '16px 36px', fontSize: '1rem' }}>
+          <Link href="/admin/login" className="btn btn-primary btn-lg" style={{ borderRadius: 9999, padding: '16px 38px', fontSize: '1rem', background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)', color: '#ffffff', fontWeight: 700, boxShadow: '0 4px 24px rgba(16, 185, 129, 0.4)' }}>
             Start Free Trial <ArrowRight size={18} />
           </Link>
-          <a href="#how-it-works" className="btn btn-outline btn-lg" style={{ borderRadius: 9999, borderColor: 'rgba(255,255,255,0.2)', color: 'white' }}>
+          <a href="#how-it-works" className="btn btn-outline btn-lg" style={{ borderRadius: 9999, borderColor: 'rgba(255,255,255,0.25)', color: 'white', fontWeight: 600 }}>
             See How It Works
           </a>
         </div>
@@ -215,18 +215,18 @@ export default function HomePage() {
       {/* ── Demo Preview Mockup ── */}
       <section style={{ maxWidth: 880, margin: '0 auto 80px', padding: '0 20px' }}>
         <div style={{
-          background: 'rgba(30, 41, 59, 0.7)', backdropFilter: 'blur(20px)',
+          background: 'rgba(15, 23, 42, 0.7)', backdropFilter: 'blur(20px)',
           border: '1px solid rgba(255, 255, 255, 0.12)', borderRadius: 24,
-          padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+          padding: 32, boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyBetween: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
             <div>
-              <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#818cf8', fontWeight: 700 }}>Live Interactive Demo</span>
+              <span style={{ fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', fontWeight: 700 }}>Live Interactive Demo</span>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginTop: 2 }}>What Your Customer Sees on Scanning</h3>
             </div>
 
             {/* Category Selector Tabs */}
-            <div style={{ display: 'flex', gap: 6, background: 'rgba(15, 23, 42, 0.6)', padding: 4, borderRadius: 9999 }}>
+            <div style={{ display: 'flex', gap: 6, background: 'rgba(15, 23, 42, 0.8)', padding: 4, borderRadius: 9999, border: '1px solid rgba(255,255,255,0.1)' }}>
               {[
                 { id: 'restaurant', label: 'Restaurant', icon: Utensils },
                 { id: 'salon', label: 'Salon', icon: Scissors },
@@ -237,11 +237,11 @@ export default function HomePage() {
                   key={tab.id}
                   onClick={() => setSelectedTab(tab.id)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px',
-                    borderRadius: 9999, border: 'none', fontSize: '0.8rem', fontWeight: 600,
+                    display: 'flex', alignItems: 'center', gap: 6, padding: '6px 16px',
+                    borderRadius: 9999, border: 'none', fontSize: '0.8rem', fontWeight: 700,
                     cursor: 'pointer', transition: 'all 0.2s',
-                    background: selectedTab === tab.id ? '#4f46e5' : 'transparent',
-                    color: selectedTab === tab.id ? 'white' : '#94a3b8'
+                    background: selectedTab === tab.id ? 'linear-gradient(135deg, #10b981, #06b6d4)' : 'transparent',
+                    color: selectedTab === tab.id ? '#ffffff' : '#94a3b8'
                   }}
                 >
                   <tab.icon size={13} /> {tab.label}
@@ -253,9 +253,9 @@ export default function HomePage() {
           {/* Phone Screen Mock */}
           <div style={{
             maxWidth: 380, margin: '0 auto', background: '#ffffff', borderRadius: 24,
-            padding: 24, color: '#0f172a', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', textAlign: 'center'
+            padding: 24, color: '#0f172a', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', textAlign: 'center'
           }}>
-            <div style={{ width: 56, height: 56, borderRadius: 16, background: 'linear-gradient(135deg, #4f46e5, #818cf8)', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.4rem' }}>
+            <div style={{ width: 56, height: 56, borderRadius: 16, background: 'linear-gradient(135deg, #10b981, #06b6d4)', margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800, fontSize: '1.4rem' }}>
               {selectedTab === 'restaurant' ? '🍕' : selectedTab === 'salon' ? '💇‍♂️' : selectedTab === 'clinic' ? '🩺' : '📱'}
             </div>
             <h4 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>
@@ -364,12 +364,12 @@ export default function HomePage() {
             { name: 'Enterprise', price: '₹4,999', period: '/month', bz: 'Unlimited', scans: 'Unlimited scans', feat: ['White-label Branding', 'Agency Admin', 'Dedicated Account Mgr', 'Priority Support'] }
           ].map((p, i) => (
             <div key={i} style={{
-              background: p.popular ? 'linear-gradient(180deg, rgba(79, 70, 229, 0.25) 0%, rgba(30, 41, 59, 0.6) 100%)' : 'rgba(30, 41, 59, 0.4)',
-              border: p.popular ? '2px solid #6366f1' : '1px solid rgba(255, 255, 255, 0.08)',
+              background: p.popular ? 'linear-gradient(180deg, rgba(16, 185, 129, 0.2) 0%, rgba(15, 23, 42, 0.7) 100%)' : 'rgba(15, 23, 42, 0.5)',
+              border: p.popular ? '2px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: 24, padding: 32, position: 'relative', display: 'flex', flexDirection: 'column'
             }}>
               {p.popular && (
-                <span style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: '#6366f1', color: 'white', fontSize: '0.75rem', fontWeight: 800, padding: '4px 14px', borderRadius: 9999, textTransform: 'uppercase' }}>
+                <span style={{ position: 'absolute', top: -14, left: '50%', transform: 'translateX(-50%)', background: 'linear-gradient(135deg, #10b981, #06b6d4)', color: 'white', fontSize: '0.75rem', fontWeight: 800, padding: '4px 14px', borderRadius: 9999, textTransform: 'uppercase' }}>
                   Most Popular
                 </span>
               )}
@@ -387,11 +387,11 @@ export default function HomePage() {
                 </li>
                 {p.feat.map((ft, fidx) => (
                   <li key={fidx} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.9rem', marginBottom: 10, color: '#94a3b8' }}>
-                    <CheckCircle2 size={16} color="#4f46e5" /> {ft}
+                    <CheckCircle2 size={16} color="#10b981" /> {ft}
                   </li>
                 ))}
               </ul>
-              <Link href="/admin/login" className={`btn ${p.popular ? 'btn-primary' : 'btn-outline'} btn-full`} style={{ borderRadius: 9999 }}>
+              <Link href="/admin/login" className={`btn ${p.popular ? 'btn-primary' : 'btn-outline'} btn-full`} style={{ borderRadius: 9999, fontWeight: 700 }}>
                 Get Started
               </Link>
             </div>

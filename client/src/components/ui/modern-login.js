@@ -42,12 +42,12 @@ export default function Component() {
         u_opacities: { value: [0.3, 0.3, 0.3, 0.5, 0.5, 0.5, 0.8, 0.8, 0.8, 1.0] },
         u_colors: {
           value: [
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(1, 1, 1),
-            new THREE.Vector3(1, 1, 1)
+            new THREE.Vector3(0.06, 0.72, 0.52),
+            new THREE.Vector3(0.02, 0.71, 0.83),
+            new THREE.Vector3(0.1, 0.8, 0.6),
+            new THREE.Vector3(0.05, 0.6, 0.75),
+            new THREE.Vector3(0.2, 0.85, 0.75),
+            new THREE.Vector3(0.1, 0.7, 0.9)
           ]
         },
         u_total_size: { value: 20.0 },
@@ -271,9 +271,10 @@ export default function Component() {
               type="submit"
               disabled={loading}
               style={{
-                width: "100%", padding: "0.75rem", borderRadius: 6, border: "none",
-                background: "#ededed", color: "#000", fontWeight: 600, fontSize: "0.875rem",
-                cursor: loading ? "wait" : "pointer", marginTop: "0.4rem", opacity: loading ? 0.8 : 1
+                width: "100%", padding: "0.85rem", borderRadius: 8, border: "none",
+                background: "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)", color: "#ffffff", fontWeight: 700, fontSize: "0.95rem",
+                cursor: loading ? "wait" : "pointer", marginTop: "0.6rem", opacity: loading ? 0.8 : 1,
+                boxShadow: "0 4px 20px rgba(16, 185, 129, 0.4)", transition: "all 0.2s ease"
               }}
             >
               {loading ? 'Signing in...' : 'Sign In with Email'}

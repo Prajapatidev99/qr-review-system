@@ -20,11 +20,11 @@ const app = express();
 app.use(helmet());
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl) or any localhost/dev origin
-    if (!origin || config.nodeEnv === 'development' || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+    // Allow requests with no origin (mobile apps, curl), localhost, vercel deployments, or matched CORS_ORIGIN
+    if (!origin || config.nodeEnv === 'development' || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('vercel.app')) {
       callback(null, true);
     } else {
-      callback(null, config.corsOrigin);
+      callback(null, config.corsOrigin || true);
     }
   },
   credentials: true,

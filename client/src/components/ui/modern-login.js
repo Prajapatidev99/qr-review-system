@@ -8,8 +8,8 @@ import { authAPI } from '../../lib/api';
 export default function Component() {
   const canvasRef = useRef(null);
   const router = useRouter();
-  const [email, setEmail] = useState('admin@qrreview.com');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -247,7 +247,7 @@ export default function Component() {
               <input
                 style={inputStyle}
                 type="email"
-                placeholder="admin@qrreview.com"
+                placeholder="admin@yourdomain.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -279,10 +279,6 @@ export default function Component() {
               {loading ? 'Signing in...' : 'Sign In with Email'}
             </button>
           </form>
-
-          <div style={{ marginTop: "1.5rem", fontSize: "0.75rem", color: "#666" }}>
-            Default Admin: <strong style={{ color: "#aaa" }}>admin@qrreview.com</strong> / <strong style={{ color: "#aaa" }}>admin123</strong>
-          </div>
         </div>
       </div>
     </div>

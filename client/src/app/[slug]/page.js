@@ -121,26 +121,38 @@ export default function ReviewPage() {
     }
   }, [scanId, business, lang]);
 
-  // Handle selecting a review suggestion — auto-copy and auto-open Google Review link
+  // Handle selecting a review suggestion — auto-copy and open Google Review link
   const handleSelectSuggestion = async (s) => {
     setSelectedSuggestion(s);
+
+    // 1. Synchronously copy to clipboard (iOS Safari requirement)
     try {
-      await navigator.clipboard.writeText(s);
-      setCopied(true);
-      if (scanId) {
-        scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => {});
-        scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(s);
+      } else {
+        // Fallback for older iOS webviews
+        const textArea = document.createElement('textarea');
+        textArea.value = s;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
       }
-      setTimeout(() => setCopied(false), 3000);
-      toast.success(t('copied', lang) + ' 🚀');
-    } catch {
-      // Fallback if clipboard permission is blocked
+      setCopied(true);
+      toast.success('Text Copied! 📋 Tap & hold on Google box to Paste 🚀', { duration: 4000 });
+      setTimeout(() => setCopied(false), 4000);
+    } catch (e) {
+      toast.error('Copied to clipboard');
     }
 
+    if (scanId) {
+      scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => {});
+      scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
+    }
+
+    // 2. Open Google Review link immediately for iOS Safari compatibility
     if (business?.googleReviewLink) {
-      setTimeout(() => {
-        window.open(business.googleReviewLink, '_blank');
-      }, 400);
+      window.open(business.googleReviewLink, '_blank');
     }
   };
 
@@ -343,13 +355,23 @@ export default function ReviewPage() {
                   ))}
                 </div>
 
+                {copied && (
+                  <div style={{
+                    background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46',
+                    padding: '10px 14px', borderRadius: 10, fontSize: '0.82rem', fontWeight: 600,
+                    marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8
+                  }}>
+                    <span>📋 <strong>Copied to Clipboard!</strong> Long-press (tap & hold) the text box on Google to <strong>Paste</strong>.</span>
+                  </div>
+                )}
+
                 <button
                   className={`copy-btn ${copied ? 'copied' : ''}`}
                   onClick={handleCopy}
                   disabled={!selectedSuggestion}
                 >
                   {copied ? <Check size={18} /> : <Copy size={18} />}
-                  {copied ? t('copied', lang) : t('copy_review', lang)}
+                  {copied ? '✓ Copied to Clipboard!' : t('copy_review', lang)}
                 </button>
               </>
             )}

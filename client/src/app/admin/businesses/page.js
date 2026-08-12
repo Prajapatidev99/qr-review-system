@@ -229,35 +229,150 @@ export default function BusinessListPage() {
         </div>
       )}
 
-      {/* QR Modal */}
+      {/* QR Customizer Modal */}
       {showQR && (
-        <div className="modal-overlay" onClick={() => setShowQR(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', maxWidth: 400 }}>
-            <div className="modal-header">
-              <h3 className="modal-title">QR Code</h3>
-              <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setShowQR(null)}>✕</button>
+        <QRCustomizerModal showQR={showQR} onClose={() => setShowQR(null)} handlePrintStandee={handlePrintStandee} />
+      )}
+    </div>
+  );
+}
+
+function QRCustomizerModal({ showQR, onClose, handlePrintStandee }) {
+  const { QRCodeSVG } = require('qrcode.react');
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+  const [logoUrl, setLogoUrl] = useState('');
+  const qrContainerRef = useState(null);
+
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (evt) => setLogoUrl(evt.target.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const downloadPNG = () => {
+    const svgElement = document.getElementById('custom-qr-svg');
+    if (!svgElement) return;
+
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const size = 600; // High resolution PNG
+    canvas.width = size;
+    canvas.height = size;
+
+    const xml = new XMLSerializer().serializeToString(svgElement);
+    const svg64 = btoa(unescape(encodeURIComponent(xml)));
+    const image64 = `data:image/svg+xml;base64,${svg64}`;
+
+    const img = new Image();
+    img.src = image64;
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, size, size);
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png');
+      link.download = `qr-${showQR.slug || 'code'}.png`;
+      link.click();
+      toast.success('High-res PNG downloaded!');
+    };
+  };
+
+  const downloadSVG = () => {
+    const svgElement = document.getElementById('custom-qr-svg');
+    if (svgElement) {
+      const serializer = new XMLSerializer();
+      const svgBlob = new Blob([serializer.serializeToString(svgElement)], { type: 'image/svg+xml' });
+      const downloadUrl = URL.createObjectURL(svgBlob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `qr-${showQR.slug || 'code'}.svg`;
+      link.click();
+      URL.revokeObjectURL(downloadUrl);
+      toast.success('Vector SVG downloaded!');
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center', maxWidth: 460, background: '#121212', border: '1px solid #222', color: '#fff' }}>
+        <div className="modal-header" style={{ borderBottom: '1px solid #222', paddingBottom: 12 }}>
+          <h3 className="modal-title" style={{ color: '#fff' }}>Custom QR Generator</h3>
+          <button className="btn btn-ghost btn-icon btn-sm" onClick={onClose} style={{ color: '#aaa' }}>✕</button>
+        </div>
+
+        <p style={{ fontWeight: 700, fontSize: '1.1rem', margin: '16px 0 4px', color: '#fff' }}>{showQR.businessName}</p>
+        <p style={{ fontSize: '0.8rem', color: '#888', marginBottom: 20 }}>{showQR.pageUrl}</p>
+
+        {/* Live Customized QR Preview */}
+        <div style={{ background: bgColor, padding: 20, borderRadius: 16, display: 'inline-block', border: '1px solid #333', boxShadow: '0 8px 24px rgba(0,0,0,0.5)' }}>
+          <QRCodeSVG
+            id="custom-qr-svg"
+            value={showQR.pageUrl}
+            size={240}
+            fgColor={fgColor}
+            bgColor={bgColor}
+            level="H"
+            includeMargin={true}
+            imageSettings={logoUrl ? {
+              src: logoUrl,
+              x: undefined,
+              y: undefined,
+              height: 48,
+              width: 48,
+              excavate: true,
+            } : undefined}
+          />
+        </div>
+
+        {/* Controls */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 20, textAlign: 'left' }}>
+          <div>
+            <label style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: 6 }}>QR Color</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input type="color" value={fgColor} onChange={(e) => setFgColor(e.target.value)} style={{ width: 36, height: 36, borderRadius: 6, border: 'none', cursor: 'pointer', background: 'transparent' }} />
+              <span style={{ fontSize: '0.8rem', color: '#ccc', fontFamily: 'monospace' }}>{fgColor}</span>
             </div>
-            <p style={{ fontWeight: 700, fontSize: '1.1rem', marginBottom: 4 }}>{showQR.businessName}</p>
-            <p style={{ fontSize: '0.8rem', color: 'var(--text-tertiary)', marginBottom: 20 }}>{showQR.pageUrl}</p>
-            <div style={{ background: 'white', padding: 20, borderRadius: 'var(--radius-lg)', border: '1px solid var(--border-light)', display: 'inline-block' }}>
-              <img src={showQR.qrDataUrl} alt="QR Code" style={{ width: 280, height: 280 }} />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 20 }}>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <button className="btn btn-primary btn-full" onClick={handleDownloadQR}>
-                  Download PNG
-                </button>
-                <button className="btn btn-outline btn-full" onClick={() => { navigator.clipboard.writeText(showQR.pageUrl); toast.success('URL copied!'); }}>
-                  Copy URL
-                </button>
-              </div>
-              <button className="btn btn-outline btn-full" onClick={handlePrintStandee} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderColor: 'var(--primary-300)', color: 'var(--primary-600)' }}>
-                <Printer size={16} /> Print Counter Standee (A5/A4)
-              </button>
+          </div>
+
+          <div>
+            <label style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: 6 }}>Background</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ width: 36, height: 36, borderRadius: 6, border: 'none', cursor: 'pointer', background: 'transparent' }} />
+              <span style={{ fontSize: '0.8rem', color: '#ccc', fontFamily: 'monospace' }}>{bgColor}</span>
             </div>
           </div>
         </div>
-      )}
+
+        {/* Center Logo Upload */}
+        <div style={{ marginTop: 14, textAlign: 'left' }}>
+          <label style={{ fontSize: '0.75rem', color: '#aaa', fontWeight: 600, display: 'block', marginBottom: 6 }}>Center Logo (Optional)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            style={{ fontSize: '0.8rem', color: '#ccc', background: '#000', padding: 8, borderRadius: 6, border: '1px solid #333', width: '100%', boxSizing: 'border-box' }}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 24 }}>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button className="btn btn-primary btn-full" onClick={downloadPNG} style={{ background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)', color: '#fff', fontWeight: 700 }}>
+              Download PNG
+            </button>
+            <button className="btn btn-outline btn-full" onClick={downloadSVG} style={{ borderColor: '#333', color: '#fff' }}>
+              Download SVG
+            </button>
+          </div>
+          <button className="btn btn-outline btn-full" onClick={handlePrintStandee} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderColor: '#10b981', color: '#10b981', fontWeight: 700 }}>
+            <Printer size={16} /> Print Counter Standee (A5/A4)
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Building2, MessageSquareText, BarChart3,
-  Lightbulb, LogOut, Menu, X, QrCode
+  Lightbulb, LogOut, Menu, X, QrCode, Settings
 } from 'lucide-react';
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/businesses', label: 'Businesses', icon: Building2 },
   { href: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquareText },
   { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb },
+  { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function AdminLayout({ children }) {

@@ -54,6 +54,34 @@ export default function FeedbacksPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    if (!feedbacks.length) {
+      toast.error('No feedbacks to export');
+      return;
+    }
+    const headers = ['Name', 'Phone', 'Rating', 'Business', 'Message', 'Status', 'Resolution Note', 'Date'];
+    const rows = feedbacks.map((f) => [
+      `"${(f.name || '').replace(/"/g, '""')}"`,
+      `"${(f.phone || '').replace(/"/g, '""')}"`,
+      f.rating,
+      `"${(f.businessId?.name || '').replace(/"/g, '""')}"`,
+      `"${(f.message || '').replace(/"/g, '""')}"`,
+      f.isResolved ? 'Resolved' : 'Pending',
+      `"${(f.resolvedNote || '').replace(/"/g, '""')}"`,
+      `"${new Date(f.createdAt).toLocaleString()}"`,
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `feedbacks_report_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success('CSV Report downloaded!');
+  };
+
   return (
     <div>
       {/* Filters */}
@@ -80,6 +108,14 @@ export default function FeedbacksPage() {
           <option value="false">Pending</option>
           <option value="true">Resolved</option>
         </select>
+
+        <button
+          className="btn btn-outline btn-sm"
+          onClick={handleExportCSV}
+          style={{ marginLeft: 'auto' }}
+        >
+          📥 Export CSV
+        </button>
       </div>
 
       {loading ? (

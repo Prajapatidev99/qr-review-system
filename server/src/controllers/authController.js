@@ -72,3 +72,29 @@ exports.getMe = async (req, res, next) => {
     next(error);
   }
 };
+
+// PUT /api/auth/change-password
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters long.' });
+    }
+
+    const admin = await Admin.findById(req.admin._id);
+    const isMatch = await admin.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Current password is incorrect.' });
+    }
+
+    admin.passwordHash = newPassword;
+    await admin.save();
+
+    res.json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -48,6 +48,7 @@ export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
   register: (data) => api.post('/auth/register', data),
+  changePassword: (data) => api.put('/auth/change-password', data),
 };
 
 // ─── Businesses ───────────────────────────────────────────

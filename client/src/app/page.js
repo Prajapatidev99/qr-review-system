@@ -294,7 +294,7 @@ export default function HomePage() {
 
         {/* ═══════ STATS BAR ═══════ */}
         <section style={{ maxWidth: 900, margin: '60px auto', padding: '0 20px' }}>
-          <div style={{
+          <div className="stats-grid" style={{
             ...card, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 0, padding: 0,
             overflow: 'hidden', textAlign: 'center'
           }}>
@@ -401,7 +401,7 @@ export default function HomePage() {
         <section style={{ maxWidth: 1000, margin: '80px auto', padding: '0 20px' }}>
           {sectionTitle('Three steps. That\'s it.', 'From QR scan to 5-star review in under 30 seconds')}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+          <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
             {[
               { step: '01', title: 'Customer Scans QR', desc: 'Place QR codes on tables, reception desks, or bills. Customer scans with any phone camera.', icon: Scan, color: '#10b981' },
               { step: '02', title: 'AI Generates Review', desc: 'Our AI instantly creates 5 unique, natural-sounding review options in the customer\'s chosen language.', icon: Sparkles, color: '#06b6d4' },
@@ -458,7 +458,7 @@ export default function HomePage() {
         <section style={{ maxWidth: 1000, margin: '80px auto', padding: '0 20px' }}>
           {sectionTitle('Trusted by business owners', 'Hear from real local businesses across India')}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="testimonials-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
             {[
               { name: 'Rajesh Patel', biz: 'Spice Garden Restaurant, Ahmedabad', quote: 'Our Google reviews went from 12 to 85 in just 2 months. Customers love how easy it is!', stars: 5 },
               { name: 'Priya Sharma', biz: 'Glow Beauty Salon, Surat', quote: 'The Hindi language option is a game changer. My customers feel comfortable leaving detailed reviews.', stars: 5 },
@@ -486,7 +486,7 @@ export default function HomePage() {
         <section id="pricing" style={{ maxWidth: 1000, margin: '80px auto', padding: '0 20px' }}>
           {sectionTitle('Simple, transparent pricing', 'Start free and scale as your business grows')}
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+          <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {[
               { name: 'Free', price: '₹0', period: 'forever', bz: '1 Business', scans: '50 scans/mo', feat: ['Basic QR Code', 'Standard Reviews', 'Email Support'] },
               { name: 'Starter', price: '₹499', period: '/month', popular: true, bz: '3 Businesses', scans: 'Unlimited scans', feat: ['AI Review Suggestions', 'WhatsApp & Call', 'Analytics Dashboard', 'Private Feedback'] },
@@ -578,6 +578,18 @@ export default function HomePage() {
         </footer>
 
       </div>
+
+      <style jsx global>{`
+        @media (max-width: 900px) {
+          .pricing-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .steps-grid { grid-template-columns: 1fr !important; }
+          .testimonials-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 600px) {
+          .pricing-grid { grid-template-columns: 1fr !important; }
+          .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+      `}</style>
     </div>
   );
 }

@@ -7,14 +7,28 @@ import { CreditCard, Sparkles, CheckCircle2, ShieldCheck, Zap } from 'lucide-rea
 export default function BillingPage() {
   return (
     <div style={{ maxWidth: 960, margin: '0 auto', padding: '12px 0' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28, borderBottom: '1px solid #222', paddingBottom: 18 }}>
-        <div style={{ width: 44, height: 44, borderRadius: 12, background: '#1a1a1a', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981' }}>
-          <CreditCard size={22} />
+      {/* Header Card */}
+      <div style={{
+        background: '#121212',
+        border: '1px solid #222',
+        borderRadius: 16,
+        padding: '24px 28px',
+        marginBottom: 28,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 16,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+      }}>
+        <div style={{ width: 48, height: 48, borderRadius: 12, background: '#1a1a1a', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#10b981', flexShrink: 0 }}>
+          <CreditCard size={24} />
         </div>
         <div>
-          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>Billing & Subscription Plans</h1>
-          <p style={{ fontSize: '0.9rem', color: '#cbd5e1', margin: '4px 0 0', fontWeight: 500 }}>Manage your plan, upgrade business slots, and unlock premium AI features</p>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: 0, letterSpacing: '-0.02em' }}>
+            Billing & Subscription Plans
+          </h1>
+          <p style={{ fontSize: '0.9rem', color: '#a1a1aa', margin: '4px 0 0', fontWeight: 500, lineHeight: 1.5 }}>
+            Manage your plan, upgrade business slots, and unlock premium AI features
+          </p>
         </div>
       </div>
 

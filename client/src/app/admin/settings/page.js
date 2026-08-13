@@ -133,14 +133,15 @@ export default function SettingsPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
           {[
             { id: 'starter', name: 'Starter', price: '₹299', period: '/month', popular: true, bz: '3 Businesses', scans: 'Unlimited scans', feat: ['AI Review Suggestions', 'WhatsApp & Call', 'Analytics Dashboard', 'Private Feedback'] },
+            { id: 'special', name: 'Special Offer 🔥', price: '₹999', period: '/year', special: true, bz: '5 Businesses', scans: 'Unlimited scans', feat: ['5 Businesses Included', 'Gemini Real-Time AI', 'WhatsApp & Call Support', 'Custom Offer Popups', 'Priority Lifetime Updates'] },
             { id: 'growth', name: 'Growth', price: '₹1,499', period: '/month', bz: '10 Businesses', scans: 'Unlimited scans', feat: ['Everything in Starter', 'Custom Offer Popups', 'Multi-Language', 'Export Reports'] },
             { id: 'enterprise', name: 'Enterprise', price: '₹4,999', period: '/month', bz: 'Unlimited Businesses', scans: 'Unlimited scans', feat: ['White-label Branding', 'Agency Admin', 'Account Manager', 'Priority Support'] }
           ].map((p) => (
             <div
               key={p.id}
               style={{
-                background: p.popular ? '#1c1917' : '#000000',
-                border: p.popular ? '1px solid #f59e0b' : '1px solid #222',
+                background: p.special ? '#1a037e' : p.popular ? '#1c1917' : '#000000',
+                border: p.special ? '1px solid #8b5cf6' : p.popular ? '1px solid #f59e0b' : '1px solid #222',
                 borderRadius: 14,
                 padding: 20,
                 position: 'relative',
@@ -148,7 +149,17 @@ export default function SettingsPage() {
                 flexDirection: 'column'
               }}
             >
-              {p.popular && (
+              {p.special && (
+                <span style={{
+                  position: 'absolute', top: -10, right: 16,
+                  background: 'linear-gradient(135deg, #a855f7, #ec4899)', color: '#fff',
+                  fontSize: '0.65rem', fontWeight: 800, padding: '2px 10px', borderRadius: 9999,
+                  textTransform: 'uppercase', letterSpacing: '0.05em'
+                }}>
+                  Best Value 🔥
+                </span>
+              )}
+              {p.popular && !p.special && (
                 <span style={{
                   position: 'absolute', top: -10, right: 16,
                   background: '#f59e0b', color: '#000',

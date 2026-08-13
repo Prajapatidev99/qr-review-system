@@ -1,4 +1,5 @@
 const Feedback = require('../models/Feedback');
+const Business = require('../models/Business');
 
 // POST /api/feedbacks (public)
 exports.submit = async (req, res, next) => {
@@ -25,18 +26,19 @@ exports.getAll = async (req, res, next) => {
   try {
     const { businessId, isResolved, page = 1, limit = 20 } = req.query;
 
-    // Isolate by logged in user's businesses unless super_admin
-    const userBusinesses = await Business.find({ adminId: req.admin._id }).select('_id');
-    const userBusinessIds = userBusinesses.map(b => b._id);
+    const query = {};
+    if (req.admin.role !== 'super_admin') {
+      const userBusinesses = await Business.find({ adminId: req.admin._id }).select('_id');
+      const userBusinessIds = userBusinesses.map(b => b._id);
+      query.businessId = { $in: userBusinessIds };
 
-    const query = { businessId: { $in: userBusinessIds } };
-
-    if (businessId) {
-      // Ensure requested business belongs to user
-      if (userBusinessIds.some(id => id.toString() === businessId)) {
+      if (businessId && userBusinessIds.some(id => id.toString() === businessId)) {
         query.businessId = businessId;
       }
+    } else if (businessId) {
+      query.businessId = businessId;
     }
+
     if (isResolved !== undefined) {
       query.isResolved = isResolved === 'true';
     }

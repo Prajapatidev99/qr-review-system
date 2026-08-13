@@ -162,6 +162,7 @@ exports.updateUserPlan = async (req, res, next) => {
     const planLimits = {
       free: 1,
       starter: 3,
+      special: 5,
       growth: 10,
       enterprise: 999,
     };

@@ -23,7 +23,7 @@ const businessSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['restaurant', 'salon', 'clinic', 'mobile_shop', 'gym', 'hotel', 'other'],
+      trim: true,
       default: 'other',
     },
     googleReviewLink: {

@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Building2, MessageSquareText,
-  Lightbulb, LogOut, Menu, X, Settings
+  Lightbulb, LogOut, Menu, X, Settings, Users
 } from 'lucide-react';
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { href: '/admin/businesses', label: 'Businesses', icon: Building2 },
   { href: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquareText },
   { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb },
+  { href: '/admin/users', label: 'Users & Accounts', icon: Users },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -97,11 +98,6 @@ export default function AdminLayout({ children }) {
         </nav>
 
         <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-          {admin && (
-            <div style={{ padding: '0 16px 12px', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>
-              {admin.name || admin.email}
-            </div>
-          )}
           <button className="admin-nav-link" onClick={handleLogout} style={{ width: '100%', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left' }}>
             <LogOut size={18} />
             Logout

@@ -113,6 +113,19 @@ export default function NewBusinessPage() {
             </div>
           </div>
 
+          {form.category === 'other' && (
+            <div className="form-group" style={{ marginTop: -8 }}>
+              <label className="form-label">Custom Business Type / Specialty</label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="e.g. Pet Grooming, Bakery, Car Wash, Coaching Institute..."
+                value={form.customCategory || ''}
+                onChange={(e) => updateForm('customCategory', e.target.value)}
+              />
+            </div>
+          )}
+
           <div className="form-group">
             <label className="form-label">Google Review Link *</label>
             <input

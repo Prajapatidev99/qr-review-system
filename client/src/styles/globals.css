@@ -1499,3 +1499,20 @@ input, textarea, select, button {
   font-size: 1.25rem;
   font-weight: 700;
 }
+
+.mobile-close-btn {
+  display: none !important;
+}
+
+.mobile-menu-btn {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .mobile-close-btn {
+    display: flex !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}

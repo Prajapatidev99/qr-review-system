@@ -422,6 +422,15 @@ export default function ReviewPage() {
           ))}
         </div>
 
+        {/* Dynamic Star Emotion Label */}
+        {(hoveredStar > 0 || rating > 0) && (
+          <div className="star-emotion-container">
+            <div className="star-emotion-badge">
+              {t(`star_${hoveredStar || rating}_emotion`, lang)}
+            </div>
+          </div>
+        )}
+
         {/* ── POSITIVE FLOW ── */}
         {phase === 'positive' && (
           <div className="animate-fade-in-up">
@@ -470,9 +479,6 @@ export default function ReviewPage() {
                       key={i}
                       className="suggestion-item"
                       selected={selectedSuggestion === s}
-                      name="Your review"
-                      role="Editable draft"
-                      company={business.name}
                       testimonial={s}
                       rating={rating}
                       tabIndex={0}
@@ -486,8 +492,7 @@ export default function ReviewPage() {
                           handleSelectSuggestion(s);
                         }
                       }}
-                    >
-                    </Testimonial>
+                    />
                   ))}
                 </div>
 

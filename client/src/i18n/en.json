@@ -22,5 +22,10 @@
   "powered_by": "Powered by QR Review System",
   "offer_cta": "Awesome!",
   "or": "or",
-  "share_privately": "Share privately with us"
+  "share_privately": "Share privately with us",
+  "star_1_emotion": "😠 Terrible — What went wrong?",
+  "star_2_emotion": "🙁 Bad — We can do better",
+  "star_3_emotion": "😐 Okay — Average experience",
+  "star_4_emotion": "😊 Good — Really liked it!",
+  "star_5_emotion": "🤩 Excellent — Loved it!"
 }

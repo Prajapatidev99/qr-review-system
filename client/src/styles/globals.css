@@ -588,7 +588,30 @@ input, textarea, select, button {
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin: 20px 0 24px;
+  margin: 20px 0 16px;
+}
+
+/* Dynamic Star Emotion Label Badge */
+.star-emotion-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.star-emotion-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  animation: emotionPop 0.25s ease-out;
+}
+
+@keyframes emotionPop {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .star-btn {

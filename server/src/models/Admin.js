@@ -27,6 +27,26 @@ const adminSchema = new mongoose.Schema(
       enum: ['super_admin', 'admin'],
       default: 'admin',
     },
+    subscription: {
+      plan: {
+        type: String,
+        enum: ['free', 'starter', 'growth', 'enterprise'],
+        default: 'free',
+      },
+      status: {
+        type: String,
+        enum: ['active', 'cancelled', 'expired'],
+        default: 'active',
+      },
+      maxBusinesses: {
+        type: Number,
+        default: 1,
+      },
+      expiresAt: {
+        type: Date,
+        default: null,
+      },
+    },
   },
   {
     timestamps: true,

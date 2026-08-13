@@ -144,3 +144,47 @@ exports.resetPassword = async (req, res, next) => {
     next(error);
   }
 };
+
+// GET /api/auth/users (super_admin)
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await Admin.find().select('-passwordHash').sort({ createdAt: -1 });
+    res.json({ users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// PUT /api/auth/users/:id/plan (super_admin)
+exports.updateUserPlan = async (req, res, next) => {
+  try {
+    const { plan } = req.body;
+    const planLimits = {
+      free: 1,
+      starter: 3,
+      growth: 10,
+      enterprise: 999,
+    };
+
+    if (!planLimits[plan]) {
+      return res.status(400).json({ error: 'Invalid plan selected.' });
+    }
+
+    const user = await Admin.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User account not found.' });
+    }
+
+    user.subscription = {
+      plan,
+      status: 'active',
+      maxBusinesses: planLimits[plan],
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    };
+
+    await user.save();
+    res.json({ message: `Plan updated to ${plan.toUpperCase()} successfully.`, user });
+  } catch (error) {
+    next(error);
+  }
+};

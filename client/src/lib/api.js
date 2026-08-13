@@ -51,6 +51,8 @@ export const authAPI = {
   changePassword: (data) => api.put('/auth/change-password', data),
   forgotPassword: (data) => api.post('/auth/forgot-password', data),
   resetPassword: (data) => api.post('/auth/reset-password', data),
+  getUsers: () => api.get('/auth/users'),
+  updateUserPlan: (id, plan) => api.put(`/auth/users/${id}/plan`, { plan }),
 };
 
 // ─── Businesses ───────────────────────────────────────────

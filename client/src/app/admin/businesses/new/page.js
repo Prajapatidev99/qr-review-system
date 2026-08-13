@@ -11,6 +11,7 @@ import Link from 'next/link';
 export default function NewBusinessPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [planLimitError, setPlanLimitError] = useState(null);
   const [form, setForm] = useState({
     name: '',
     category: 'restaurant',
@@ -42,12 +43,18 @@ export default function NewBusinessPage() {
       return;
     }
     setLoading(true);
+    setPlanLimitError(null);
     try {
       await businessAPI.create(form);
       toast.success('Business created successfully!');
       router.push('/admin/businesses');
     } catch (err) {
-      toast.error(err.response?.data?.error || 'Failed to create business');
+      if (err.response?.data?.limitReached) {
+        setPlanLimitError(err.response.data.error);
+        toast.error('Plan limit reached!');
+      } else {
+        toast.error(err.response?.data?.error || 'Failed to create business');
+      }
     } finally {
       setLoading(false);
     }
@@ -58,6 +65,30 @@ export default function NewBusinessPage() {
       <Link href="/admin/businesses" className="btn btn-ghost btn-sm" style={{ marginBottom: 20 }}>
         <ArrowLeft size={16} /> Back to Businesses
       </Link>
+
+      {planLimitError && (
+        <div style={{
+          background: '#451a03', border: '1px solid #f59e0b', borderRadius: 12,
+          padding: 20, marginBottom: 24, color: '#fef3c7'
+        }}>
+          <h3 style={{ margin: '0 0 8px', fontSize: '1.05rem', color: '#fbbf24', fontWeight: 700 }}>
+            ⚠️ Subscription Plan Limit Reached
+          </h3>
+          <p style={{ margin: '0 0 16px', fontSize: '0.88rem', lineHeight: 1.5, color: '#fde68a' }}>
+            {planLimitError}
+          </p>
+          <Link
+            href="/admin/settings"
+            className="btn"
+            style={{
+              background: '#f59e0b', color: '#000', fontWeight: 700, fontSize: '0.85rem',
+              padding: '8px 16px', borderRadius: 8, display: 'inline-block'
+            }}
+          >
+            🚀 Upgrade Plan in Settings
+          </Link>
+        </div>
+      )}
 
       <div className="card">
         <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: 24 }}>Add New Business</h2>

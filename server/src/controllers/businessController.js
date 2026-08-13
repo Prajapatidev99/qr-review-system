@@ -61,6 +61,21 @@ exports.create = async (req, res, next) => {
       offer, reviewSuggestions, defaultLanguage,
     } = req.body;
 
+    // Check user plan business limit unless super_admin
+    if (req.admin.role !== 'super_admin') {
+      const currentCount = await Business.countDocuments({ adminId: req.admin._id });
+      const maxAllowed = req.admin.subscription?.maxBusinesses || 1;
+      if (currentCount >= maxAllowed) {
+        const planName = (req.admin.subscription?.plan || 'free').toUpperCase();
+        return res.status(403).json({
+          error: `Plan limit reached! You have used all ${maxAllowed} business slot(s) available on your ${planName} Plan. Upgrade to Starter (₹299/mo) or Growth to add more businesses.`,
+          limitReached: true,
+          currentCount,
+          maxAllowed,
+        });
+      }
+    }
+
     // Generate unique slug
     let slug = slugify(name);
     const existingSlug = await Business.findOne({ slug });

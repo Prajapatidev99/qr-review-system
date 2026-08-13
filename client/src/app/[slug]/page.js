@@ -422,14 +422,14 @@ export default function ReviewPage() {
           ))}
         </div>
 
-        {/* Dynamic Star Emotion Label */}
-        {(hoveredStar > 0 || rating > 0) && (
-          <div className="star-emotion-container">
-            <div className="star-emotion-badge">
+        {/* Dynamic Star Emotion Label — Smooth Spring Animation */}
+        <div className="star-emotion-container">
+          {(hoveredStar > 0 || rating > 0) && (
+            <div key={hoveredStar || rating} className="star-emotion-badge">
               {t(`star_${hoveredStar || rating}_emotion`, lang)}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {/* ── POSITIVE FLOW ── */}
         {phase === 'positive' && (

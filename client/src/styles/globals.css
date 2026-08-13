@@ -591,11 +591,14 @@ input, textarea, select, button {
   margin: 20px 0 16px;
 }
 
-/* Dynamic Star Emotion Label Badge */
+/* Dynamic Star Emotion Label Badge — Smooth Animation */
 .star-emotion-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  align-items: center;
+  min-height: 34px;
+  margin-bottom: 16px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .star-emotion-badge {
@@ -604,14 +607,22 @@ input, textarea, select, button {
   color: #fbbf24;
   background: rgba(251, 191, 36, 0.1);
   border: 1px solid rgba(251, 191, 36, 0.25);
-  padding: 6px 16px;
+  padding: 6px 18px;
   border-radius: 9999px;
-  animation: emotionPop 0.25s ease-out;
+  box-shadow: 0 4px 14px rgba(251, 191, 36, 0.12);
+  animation: emotionSmoothPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
 }
 
-@keyframes emotionPop {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
+@keyframes emotionSmoothPop {
+  0% {
+    opacity: 0;
+    transform: translateY(6px) scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .star-btn {
@@ -1212,15 +1223,19 @@ input, textarea, select, button {
 }
 
 .admin-sidebar-brand-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
-  border-radius: var(--radius-md);
+  width: 36px;
+  height: 36px;
+  background: #111111;
+  border: 1px solid #333333;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 0.85rem;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 }
 
 .admin-sidebar-brand-text {

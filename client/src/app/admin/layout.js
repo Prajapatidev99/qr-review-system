@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
-  LayoutDashboard, Building2, MessageSquareText, BarChart3,
-  Lightbulb, LogOut, Menu, X, QrCode, Settings
+  LayoutDashboard, Building2, MessageSquareText,
+  Lightbulb, LogOut, Menu, X, Settings
 } from 'lucide-react';
 
 const navItems = [
@@ -23,7 +23,6 @@ export default function AdminLayout({ children }) {
   const [admin, setAdmin] = useState(null);
 
   useEffect(() => {
-    // Skip auth check for login page
     if (pathname === '/admin/login') return;
 
     const token = localStorage.getItem('qr_admin_token');
@@ -49,7 +48,6 @@ export default function AdminLayout({ children }) {
     router.push('/admin/login');
   };
 
-  // Login page doesn't use admin layout
   if (pathname === '/admin/login') {
     return children;
   }
@@ -63,7 +61,7 @@ export default function AdminLayout({ children }) {
         <div
           style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
-            zIndex: 45, display: 'none',
+            zIndex: 45,
           }}
           className="sidebar-overlay"
           onClick={() => setSidebarOpen(false)}
@@ -73,13 +71,11 @@ export default function AdminLayout({ children }) {
       {/* Sidebar */}
       <aside className={`admin-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="admin-sidebar-brand">
-          <div className="admin-sidebar-brand-icon">
-            <QrCode size={20} />
-          </div>
+          <div className="admin-sidebar-brand-icon">QR</div>
           <span className="admin-sidebar-brand-text">QR Review</span>
           <button
-            className="btn btn-ghost btn-icon"
-            style={{ marginLeft: 'auto', display: 'none', color: 'white' }}
+            className="btn btn-ghost btn-icon mobile-close-btn"
+            style={{ marginLeft: 'auto', color: 'white' }}
             onClick={() => setSidebarOpen(false)}
           >
             <X size={18} />
@@ -118,10 +114,8 @@ export default function AdminLayout({ children }) {
         <header className="admin-topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <button
-              className="btn btn-ghost btn-icon"
+              className="btn btn-ghost btn-icon mobile-menu-btn"
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              style={{ display: 'none' }}
-              id="mobile-menu-btn"
             >
               <Menu size={20} />
             </button>
@@ -133,14 +127,6 @@ export default function AdminLayout({ children }) {
           {children}
         </div>
       </main>
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .sidebar-overlay { display: block !important; }
-          #mobile-menu-btn { display: flex !important; }
-          .admin-sidebar button[style*="display: none"] { display: flex !important; }
-        }
-      `}</style>
     </div>
   );
 }

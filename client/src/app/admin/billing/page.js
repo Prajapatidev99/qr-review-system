@@ -13,8 +13,8 @@ export default function BillingPage() {
           <CreditCard size={22} />
         </div>
         <div>
-          <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: 0 }}>Billing & Subscription Plans</h1>
-          <p style={{ fontSize: '0.85rem', color: '#888', margin: '2px 0 0' }}>Manage your plan, upgrade business slots, and unlock premium AI features</p>
+          <h1 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>Billing & Subscription Plans</h1>
+          <p style={{ fontSize: '0.9rem', color: '#cbd5e1', margin: '4px 0 0', fontWeight: 500 }}>Manage your plan, upgrade business slots, and unlock premium AI features</p>
         </div>
       </div>
 

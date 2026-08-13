@@ -14,6 +14,8 @@ const feedbackRoutes = require('./routes/feedbacks');
 const analyticsRoutes = require('./routes/analytics');
 const suggestionRoutes = require('./routes/suggestions');
 
+const sanitizeInput = require('./middleware/sanitizeInput');
+
 const app = express();
 
 // ─── Security & Parsing ───────────────────────────────────
@@ -31,6 +33,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(sanitizeInput);
 
 // ─── Rate Limiting ────────────────────────────────────────
 app.use('/api', apiLimiter);

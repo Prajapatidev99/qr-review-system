@@ -5,17 +5,25 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Building2, MessageSquareText,
-  Lightbulb, LogOut, Menu, X, Settings, Users
+  Lightbulb, LogOut, Menu, X, Settings, Users, CreditCard
 } from 'lucide-react';
 
-const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/businesses', label: 'Businesses', icon: Building2 },
-  { href: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquareText },
-  { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb },
-  { href: '/admin/users', label: 'Users & Accounts', icon: Users },
-  { href: '/admin/settings', label: 'Settings', icon: Settings },
-];
+const getNavItems = (role) => {
+  const items = [
+    { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/admin/businesses', label: 'Businesses', icon: Building2 },
+    { href: '/admin/feedbacks', label: 'Feedbacks', icon: MessageSquareText },
+    { href: '/admin/suggestions', label: 'Suggestions', icon: Lightbulb },
+    { href: '/admin/billing', label: 'Billing & Plans', icon: CreditCard },
+  ];
+
+  if (role === 'super_admin') {
+    items.push({ href: '/admin/users', label: 'Users & Accounts', icon: Users });
+  }
+
+  items.push({ href: '/admin/settings', label: 'Settings', icon: Settings });
+  return items;
+};
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
@@ -53,7 +61,8 @@ export default function AdminLayout({ children }) {
     return children;
   }
 
-  const pageTitle = navItems.find((item) => item.href === pathname)?.label || 'Dashboard';
+  const currentNavItems = getNavItems(admin?.role);
+  const pageTitle = currentNavItems.find((item) => item.href === pathname)?.label || 'Dashboard';
 
   return (
     <div className="admin-layout">
@@ -84,7 +93,7 @@ export default function AdminLayout({ children }) {
         </div>
 
         <nav className="admin-nav">
-          {navItems.map((item) => (
+          {currentNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}

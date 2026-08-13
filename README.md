@@ -50,11 +50,6 @@ cp .env.example .env.local    # Edit with your values
 npm run dev
 ```
 
-### Default Admin
-After starting the server, a default admin is created:
-- **Email:** admin@qrreview.com
-- **Password:** admin123
-
 ## API Documentation
 
 See `server/` README for full API endpoint documentation.

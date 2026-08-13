@@ -181,24 +181,37 @@ export default function Component() {
     };
   }, []);
 
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error('Please enter email and password');
+    if (!email || !password || (isSignUp && !name)) {
+      toast.error('Please fill in all required fields');
       return;
     }
     setLoading(true);
     try {
-      const res = await authAPI.login({ email, password });
-      const token = res.data.token;
-      localStorage.setItem('qr_admin_token', token);
-      localStorage.setItem('qr_admin_user', JSON.stringify(res.data.admin));
-      document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
-      toast.success('Signed in successfully!');
-      window.location.href = '/admin';
+      if (isSignUp) {
+        const res = await authAPI.register({ name, email, password });
+        const token = res.data.token;
+        localStorage.setItem('qr_admin_token', token);
+        localStorage.setItem('qr_admin_user', JSON.stringify(res.data.admin));
+        document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+        toast.success('Account created successfully!');
+        window.location.href = '/admin';
+      } else {
+        const res = await authAPI.login({ email, password });
+        const token = res.data.token;
+        localStorage.setItem('qr_admin_token', token);
+        localStorage.setItem('qr_admin_user', JSON.stringify(res.data.admin));
+        document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+        toast.success('Signed in successfully!');
+        window.location.href = '/admin';
+      }
     } catch (err) {
-      console.error('Login error:', err);
-      toast.error(err.response?.data?.error || err.message || 'Invalid credentials');
+      console.error('Auth error:', err);
+      toast.error(err.response?.data?.error || err.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
@@ -238,10 +251,29 @@ export default function Component() {
 
         <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           {Logo}
-          <h1 style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "0.25rem", letterSpacing: "-0.025em" }}>Welcome back</h1>
-          <p style={{ fontSize: "0.85rem", color: "#b0b0b0", marginBottom: "1.25rem", lineHeight: 1.5 }}>Sign in to manage your QR Review dashboard.</p>
+          <h1 style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "0.25rem", letterSpacing: "-0.025em" }}>
+            {isSignUp ? 'Create your account' : 'Welcome back'}
+          </h1>
+          <p style={{ fontSize: "0.85rem", color: "#b0b0b0", marginBottom: "1.25rem", lineHeight: 1.5 }}>
+            {isSignUp ? 'Sign up to start growing your Google reviews.' : 'Sign in to manage your QR Review dashboard.'}
+          </p>
 
           <form onSubmit={handleSubmit} style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
+            {isSignUp && (
+              <div style={{ textAlign: "left", width: "100%" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Full Name</label>
+                <input
+                  style={inputStyle}
+                  type="text"
+                  placeholder="John Doe"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+            )}
+
             <div style={{ textAlign: "left", width: "100%" }}>
               <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Email Address</label>
               <input
@@ -251,7 +283,7 @@ export default function Component() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                autoFocus
+                autoFocus={!isSignUp}
               />
             </div>
 
@@ -277,8 +309,19 @@ export default function Component() {
                 boxShadow: "0 4px 20px rgba(16, 185, 129, 0.4)", transition: "all 0.2s ease"
               }}
             >
-              {loading ? 'Signing in...' : 'Sign In with Email'}
+              {loading ? (isSignUp ? 'Creating Account...' : 'Signing in...') : (isSignUp ? 'Create Free Account' : 'Sign In with Email')}
             </button>
+
+            <div style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#999' }}>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+              >
+                {isSignUp ? 'Sign In' : 'Sign Up Free'}
+              </button>
+            </div>
           </form>
         </div>
       </div>

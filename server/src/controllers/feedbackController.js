@@ -24,10 +24,18 @@ exports.submit = async (req, res, next) => {
 exports.getAll = async (req, res, next) => {
   try {
     const { businessId, isResolved, page = 1, limit = 20 } = req.query;
-    const query = {};
+
+    // Isolate by logged in user's businesses unless super_admin
+    const userBusinesses = await Business.find({ adminId: req.admin._id }).select('_id');
+    const userBusinessIds = userBusinesses.map(b => b._id);
+
+    const query = { businessId: { $in: userBusinessIds } };
 
     if (businessId) {
-      query.businessId = businessId;
+      // Ensure requested business belongs to user
+      if (userBusinessIds.some(id => id.toString() === businessId)) {
+        query.businessId = businessId;
+      }
     }
     if (isResolved !== undefined) {
       query.isResolved = isResolved === 'true';
@@ -58,19 +66,22 @@ exports.getAll = async (req, res, next) => {
 // PUT /api/feedbacks/:id/resolve (admin)
 exports.resolve = async (req, res, next) => {
   try {
-    const { resolvedNote } = req.body;
+    const userBusinesses = await Business.find({ adminId: req.admin._id }).select('_id');
+    const userBusinessIds = userBusinesses.map(b => b._id);
 
-    const feedback = await Feedback.findByIdAndUpdate(
-      req.params.id,
-      { isResolved: true, resolvedNote: resolvedNote || '' },
-      { new: true }
-    );
+    const feedback = await Feedback.findOne({
+      _id: req.params.id,
+      businessId: { $in: userBusinessIds },
+    });
 
     if (!feedback) {
       return res.status(404).json({ error: 'Feedback not found.' });
     }
 
-    res.json({ feedback });
+    feedback.isResolved = req.body.isResolved !== undefined ? req.body.isResolved : true;
+    await feedback.save();
+
+    res.json({ message: 'Feedback updated.', feedback });
   } catch (error) {
     next(error);
   }

@@ -489,7 +489,7 @@ export default function HomePage() {
           <div className="pricing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
             {[
               { name: 'Free', price: '₹0', period: 'forever', bz: '1 Business', scans: '50 scans/mo', feat: ['Basic QR Code', 'Standard Reviews', 'Email Support'] },
-              { name: 'Starter', price: '₹499', period: '/month', popular: true, bz: '3 Businesses', scans: 'Unlimited scans', feat: ['AI Review Suggestions', 'WhatsApp & Call', 'Analytics Dashboard', 'Private Feedback'] },
+              { name: 'Starter', price: '₹299', period: '/month', popular: true, bz: '3 Businesses', scans: 'Unlimited scans', feat: ['AI Review Suggestions', 'WhatsApp & Call', 'Analytics Dashboard', 'Private Feedback'] },
               { name: 'Growth', price: '₹1,499', period: '/month', bz: '10 Businesses', scans: 'Unlimited scans', feat: ['Everything in Starter', 'Custom Offer Popups', 'Multi-Language', 'Export Reports'] },
               { name: 'Enterprise', price: '₹4,999', period: '/month', bz: 'Unlimited', scans: 'Unlimited scans', feat: ['White-label Branding', 'Agency Admin', 'Account Manager', 'Priority Support'] }
             ].map((p, i) => (

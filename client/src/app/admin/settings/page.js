@@ -117,6 +117,84 @@ export default function SettingsPage() {
           </button>
         </form>
       </div>
+
+      {/* ─── Subscription & Plan Upgrade Section ─── */}
+      <div className="card" style={{ background: '#121212', border: '1px solid #222', padding: 32, marginTop: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24, borderBottom: '1px solid #222', paddingBottom: 16 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 10, background: '#1a1a1a', border: '1px solid #333', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24' }}>
+            <Lock size={20} />
+          </div>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff', margin: 0 }}>Subscription & Billing Plans</h2>
+            <p style={{ fontSize: '0.85rem', color: '#888', margin: '2px 0 0' }}>Choose or upgrade your plan to unlock more business slots and AI features</p>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
+          {[
+            { id: 'starter', name: 'Starter', price: '₹299', period: '/month', popular: true, bz: '3 Businesses', scans: 'Unlimited scans', feat: ['AI Review Suggestions', 'WhatsApp & Call', 'Analytics Dashboard', 'Private Feedback'] },
+            { id: 'growth', name: 'Growth', price: '₹1,499', period: '/month', bz: '10 Businesses', scans: 'Unlimited scans', feat: ['Everything in Starter', 'Custom Offer Popups', 'Multi-Language', 'Export Reports'] },
+            { id: 'enterprise', name: 'Enterprise', price: '₹4,999', period: '/month', bz: 'Unlimited Businesses', scans: 'Unlimited scans', feat: ['White-label Branding', 'Agency Admin', 'Account Manager', 'Priority Support'] }
+          ].map((p) => (
+            <div
+              key={p.id}
+              style={{
+                background: p.popular ? '#1c1917' : '#000000',
+                border: p.popular ? '1px solid #f59e0b' : '1px solid #222',
+                borderRadius: 14,
+                padding: 20,
+                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
+            >
+              {p.popular && (
+                <span style={{
+                  position: 'absolute', top: -10, right: 16,
+                  background: '#f59e0b', color: '#000',
+                  fontSize: '0.65rem', fontWeight: 800, padding: '2px 8px', borderRadius: 9999,
+                  textTransform: 'uppercase'
+                }}>
+                  Recommended
+                </span>
+              )}
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#ffffff', margin: '0 0 6px' }}>{p.name}</h3>
+              <div style={{ margin: '8px 0 14px' }}>
+                <span style={{ fontSize: '1.6rem', fontWeight: 800, color: '#ffffff' }}>{p.price}</span>
+                <span style={{ color: '#888', fontSize: '0.8rem' }}> {p.period}</span>
+              </div>
+              <div style={{ fontSize: '0.8rem', color: '#10b981', fontWeight: 600, marginBottom: 12 }}>
+                ✓ {p.bz} · {p.scans}
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 18px', fontSize: '0.78rem', color: '#aaa', flex: 1 }}>
+                {p.feat.map((f, fi) => (
+                  <li key={fi} style={{ marginBottom: 4 }}>• {f}</li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={() => {
+                  toast.success(`Redirecting to upgrade to ${p.name} Plan (${p.price}/mo)...`);
+                  window.open(`https://api.whatsapp.com/send?phone=919974000000&text=Hi,%20I%20want%20to%20buy%20the%20${p.name}%20Plan%20(${p.price}/mo)%20for%20my%20QR%20Review%20account`, '_blank');
+                }}
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: p.popular ? '#f59e0b' : '#222',
+                  color: p.popular ? '#000' : '#fff',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Buy / Upgrade Plan
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

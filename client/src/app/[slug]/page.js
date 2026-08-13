@@ -287,7 +287,7 @@ export default function ReviewPage() {
   if (loading) {
     return (
       <div className="review-page" style={{ justifyContent: 'center' }}>
-        <div className="spinner" style={{ borderTopColor: '#8b5cf6' }}></div>
+        <div className="spinner" style={{ borderTopColor: '#4f46e5' }}></div>
       </div>
     );
   }
@@ -325,7 +325,7 @@ export default function ReviewPage() {
         <div className="review-header">
           <div className="review-logo">
             {business.logo ? (
-              <img src={business.logo} alt={business.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '22px' }} />
+              <img src={business.logo} alt={business.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '20px' }} />
             ) : (
               business.name.charAt(0).toUpperCase()
             )}
@@ -335,33 +335,33 @@ export default function ReviewPage() {
           {phase === 'rating' && (
             <>
               <p className="review-subtitle">{t('rating_title', lang)}</p>
-              <p style={{ fontSize: '0.78rem', color: 'rgba(148,163,184,0.6)', marginTop: 6 }}>
+              <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>
                 {t('tap_stars', lang)}
               </p>
             </>
           )}
           {phase === 'positive' && (
             <>
-              <p className="review-subtitle" style={{ color: '#6ee7b7', fontWeight: 600 }}>
+              <p className="review-subtitle" style={{ color: '#059669', fontWeight: 600 }}>
                 {t('positive_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.7)', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: 4 }}>
                 {t('positive_subtitle', lang)}
               </p>
             </>
           )}
           {phase === 'negative' && (
             <>
-              <p className="review-subtitle" style={{ fontWeight: 600 }}>
+              <p className="review-subtitle" style={{ fontWeight: 600, color: '#e11d48' }}>
                 {t('negative_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.7)', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: 4 }}>
                 {t('negative_subtitle', lang)}
               </p>
             </>
           )}
           {phase === 'thanks' && (
-            <p className="review-subtitle" style={{ color: '#6ee7b7', fontWeight: 600 }}>
+            <p className="review-subtitle" style={{ color: '#059669', fontWeight: 600 }}>
               {t('feedback_thanks', lang)}
             </p>
           )}
@@ -553,7 +553,7 @@ export default function ReviewPage() {
         {phase === 'thanks' && (
           <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: '24px 0' }}>
             <div className="thanks-emoji">🙏</div>
-            <p style={{ color: 'rgba(148,163,184,0.8)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+            <p style={{ color: '#475569', fontSize: '0.95rem', lineHeight: 1.5 }}>
               {t('feedback_thanks', lang)}
             </p>
             <a

@@ -427,120 +427,53 @@ input, textarea, select, button {
   border-width: 2px;
 }
 
-/* ─── Toast / Notifications ───────────────────────────────── */
-.toast-container {
-  font-family: var(--font-body);
-}
-
-/* ─── Page Loading Animation ──────────────────────────────── */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-@keyframes starBounce {
-  0% { transform: scale(1); }
-  25% { transform: scale(1.3); }
-  50% { transform: scale(0.9); }
-  100% { transform: scale(1); }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.4s var(--transition-bounce) forwards;
-}
-
-/* ─── Review Page — Clean Modern Professional Light Theme ──── */
+/* ─── Review Page — 21st.dev Dark Testimonial Card Theme ──── */
 
 .review-page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #09090b;
+  color: #f4f4f5;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 32px 16px;
+  padding: 36px 16px;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Subtle background accent glow */
+/* Background subtle ambient glow */
 .review-page::before {
   content: '';
   position: absolute;
-  top: -10%;
+  top: -15%;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, rgba(59, 130, 246, 0.03) 50%, transparent 70%);
+  height: 450px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.04) 0%, rgba(99, 102, 241, 0.03) 50%, transparent 70%);
   pointer-events: none;
 }
 
-/* Main Clean Card */
+/* Main Container Card */
 .review-card {
   width: 100%;
-  max-width: 480px;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  max-width: 520px;
+  background: #121215;
+  border: 1px solid #27272a;
   border-radius: 24px;
-  padding: 40px 32px 36px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+  padding: 36px 28px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 1;
-  animation: cardFadeIn 0.5s ease-out;
+  animation: cardFadeIn 0.4s ease-out;
 }
 
 @keyframes cardFadeIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
@@ -556,44 +489,44 @@ input, textarea, select, button {
 
 /* Business Logo / Avatar */
 .review-logo {
-  width: 76px;
-  height: 76px;
+  width: 72px;
+  height: 72px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+  background: linear-gradient(135deg, #27272a 0%, #18181b 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 18px;
-  font-size: 2.2rem;
+  margin: 0 auto 16px;
+  font-size: 2rem;
   font-weight: 700;
   color: #ffffff;
-  box-shadow: 0 8px 20px -4px rgba(79, 70, 229, 0.25);
-  border: 3px solid #ffffff;
+  border: 1px solid #3f3f46;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
 .review-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   margin-bottom: 6px;
   letter-spacing: -0.02em;
 }
 
 .review-subtitle {
   font-size: 0.9375rem;
-  color: #64748b;
+  color: #a1a1aa;
   line-height: 1.5;
 }
 
-/* ─── Step Progress Indicator — Clean Pills ────────────────── */
+/* ─── Step Progress Indicator ─────────────────────────────── */
 .step-progress {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0;
   margin: 0 auto 24px;
-  max-width: 300px;
+  max-width: 280px;
 }
 
 .step-dot {
@@ -610,15 +543,15 @@ input, textarea, select, button {
 }
 
 .step-dot.inactive {
-  background: #f1f5f9;
-  color: #94a3b8;
-  border: 1px solid #e2e8f0;
+  background: #18181b;
+  color: #71717a;
+  border: 1px solid #27272a;
 }
 
 .step-dot.active {
-  background: #4f46e5;
-  color: #ffffff;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  background: #fbbf24;
+  color: #09090b;
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
 }
 
 .step-dot.completed {
@@ -629,7 +562,7 @@ input, textarea, select, button {
 .step-line {
   flex: 1;
   height: 2px;
-  background: #e2e8f0;
+  background: #27272a;
   margin: 0 4px;
 }
 
@@ -639,7 +572,7 @@ input, textarea, select, button {
 
 .step-label {
   font-size: 0.7rem;
-  color: #94a3b8;
+  color: #71717a;
   text-align: center;
   margin-top: 4px;
   font-weight: 600;
@@ -647,10 +580,10 @@ input, textarea, select, button {
 
 .step-dot.active + .step-label,
 .step-dot.completed + .step-label {
-  color: #334155;
+  color: #d4d4d8;
 }
 
-/* ─── Star Rating — Warm & Clean ───────────────────────────── */
+/* ─── Star Rating — Bright Gold ───────────────────────────── */
 .star-rating {
   display: flex;
   justify-content: center;
@@ -667,8 +600,8 @@ input, textarea, select, button {
 }
 
 .star-btn svg {
-  width: 48px;
-  height: 48px;
+  width: 46px;
+  height: 46px;
   transition: all 0.2s ease;
 }
 
@@ -692,22 +625,22 @@ input, textarea, select, button {
 
 .star-btn .star-filled {
   fill: #f59e0b;
-  stroke: #d97706;
+  stroke: #fbbf24;
   stroke-width: 0.8;
 }
 
 .star-btn .star-empty {
-  fill: #f1f5f9;
-  stroke: #cbd5e1;
+  fill: #18181b;
+  stroke: #3f3f46;
   stroke-width: 1;
 }
 
-/* ─── AI Badge & Toolbar ──────────────────────────────────── */
+/* ─── Toolbar & Badges ────────────────────────────────────── */
 .review-toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
   gap: 8px;
 }
@@ -720,14 +653,13 @@ input, textarea, select, button {
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: #eeef2a1a;
-  background: #f5f3ff;
-  color: #6d28d9;
-  border: 1px solid #ddd6fe;
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
 }
 
 .ai-badge svg {
-  color: #7c3aed;
+  color: #fbbf24;
 }
 
 .refresh-btn {
@@ -736,9 +668,9 @@ input, textarea, select, button {
   gap: 5px;
   padding: 5px 12px;
   border-radius: 9999px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  color: #475569;
+  border: 1px solid #27272a;
+  background: #18181b;
+  color: #a1a1aa;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
@@ -746,9 +678,9 @@ input, textarea, select, button {
 }
 
 .refresh-btn:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: #27272a;
+  color: #ffffff;
+  border-color: #3f3f46;
 }
 
 .refresh-btn:disabled {
@@ -756,90 +688,150 @@ input, textarea, select, button {
   cursor: not-allowed;
 }
 
-/* ─── Suggestion Cards — Modern Shadcn Style ──────────────── */
+/* ─── Testimonial Suggestion Cards (Exact 21st.dev Style) ─── */
 .suggestion-heading {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #334155;
+  color: #e4e4e7;
   margin-bottom: 12px;
+}
+
+.suggestion-helper {
+  color: #a1a1aa;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  margin: -6px 0 14px;
 }
 
 .suggestion-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin: 0 0 18px;
+  gap: 14px;
+  margin: 0 0 20px;
 }
 
-.suggestion-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* Individual Testimonial Card matching screenshot */
+.testimonial-card {
   position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid #27272a;
+  background: #18181b;
+  padding: 24px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.suggestion-item:hover {
-  border-color: #c7d2fe;
-  background: #faf5ff;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.06);
-  transform: translateY(-1px);
+.testimonial-card:hover {
+  border-color: #3f3f46;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-2px);
 }
 
-.suggestion-item:active {
-  transform: translateY(0);
+.testimonial-card-selected {
+  border-color: #f59e0b !important;
+  background: #1c1917 !important;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3), 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
-.suggestion-item.selected {
-  background: #f5f3ff;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+.testimonial-card-quote {
+  position: absolute;
+  right: 20px;
+  top: 14px;
+  font-family: Georgia, serif;
+  font-size: 3.5rem;
+  line-height: 1;
+  color: #27272a;
+  pointer-events: none;
+  user-select: none;
 }
 
-.suggestion-text {
-  font-size: 0.9125rem;
-  color: #1e293b;
-  line-height: 1.55;
-  flex: 1;
-  font-weight: 450;
+.testimonial-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
-.suggestion-radio {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid #cbd5e1;
+.testimonial-card-stars {
+  display: flex;
+  gap: 4px;
+}
+
+.testimonial-card-star-filled {
+  fill: #fbbf24;
+  color: #fbbf24;
+}
+
+.testimonial-card-star-empty {
+  fill: #27272a;
+  color: #27272a;
+}
+
+.testimonial-card-text {
+  font-size: 0.9375rem;
+  color: #d4d4d8;
+  line-height: 1.6;
+}
+
+.testimonial-card-author {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 2px;
-  transition: all 0.2s ease;
-  background: #ffffff;
+  justify-content: space-between;
+  padding-top: 4px;
 }
 
-.suggestion-item.selected .suggestion-radio {
-  border-color: #4f46e5;
-  background: #4f46e5;
+.testimonial-card-author-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.suggestion-item.selected .suggestion-radio::after {
-  content: '✓';
-  font-size: 11px;
+.testimonial-card-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid #3f3f46;
+  background: #27272a;
+}
+
+.testimonial-card-person h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
   color: #ffffff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.testimonial-card-person p {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  margin-top: 2px;
+}
+
+/* Selected indicator badge on card */
+.testimonial-card-selected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
   font-weight: 700;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  padding: 3px 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 /* ─── Copied Banner ───────────────────────────────────────── */
 .copied-banner {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  color: #065f46;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #6ee7b7;
   padding: 12px 16px;
   border-radius: 12px;
   font-size: 0.85rem;
@@ -873,12 +865,12 @@ input, textarea, select, button {
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 4px;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
 }
 
 .copy-btn:hover {
   background: #059669;
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.35);
   transform: translateY(-1px);
 }
 
@@ -887,7 +879,7 @@ input, textarea, select, button {
 }
 
 .copy-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
@@ -905,30 +897,28 @@ input, textarea, select, button {
   gap: 10px;
   width: 100%;
   padding: 15px 24px;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
+  background: #18181b;
+  border: 1px solid #27272a;
   border-radius: 12px;
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
   margin-top: 12px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .google-review-btn:hover {
   border-color: #4285F4;
-  background: #f8fafc;
-  box-shadow: 0 4px 14px rgba(66, 133, 244, 0.12);
-  color: #0f172a;
+  background: #27272a;
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
 .google-review-btn.pulse-glow {
   border-color: #4285F4;
-  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2), 0 4px 14px rgba(66, 133, 244, 0.15);
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.25), 0 4px 16px rgba(66, 133, 244, 0.2);
 }
 
 .google-review-btn .google-icon {
@@ -967,16 +957,16 @@ input, textarea, select, button {
 }
 .action-btn-whatsapp:hover {
   background: #1da851;
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
   transform: translateY(-1px);
 }
 
 .action-btn-call {
-  background: #4f46e5;
+  background: #3b82f6;
 }
 .action-btn-call:hover {
-  background: #4338ca;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  background: #2563eb;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   transform: translateY(-1px);
 }
 
@@ -985,7 +975,7 @@ input, textarea, select, button {
 }
 .action-btn-maps:hover {
   background: #d33426;
-  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.25);
+  box-shadow: 0 4px 12px rgba(234, 67, 53, 0.3);
   transform: translateY(-1px);
 }
 
@@ -995,19 +985,19 @@ input, textarea, select, button {
 }
 
 .feedback-section .form-input {
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  color: #0f172a;
+  background: #18181b;
+  border: 1px solid #27272a;
+  color: #ffffff;
   border-radius: 10px;
 }
 
 .feedback-section .form-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15);
 }
 
 .feedback-section .form-input::placeholder {
-  color: #94a3b8;
+  color: #71717a;
 }
 
 .feedback-divider {
@@ -1015,7 +1005,7 @@ input, textarea, select, button {
   align-items: center;
   gap: 12px;
   margin: 20px 0 14px;
-  color: #94a3b8;
+  color: #71717a;
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -1024,15 +1014,15 @@ input, textarea, select, button {
   content: '';
   flex: 1;
   height: 1px;
-  background: #e2e8f0;
+  background: #27272a;
 }
 
 /* ─── Offer Popup ─────────────────────────────────────────── */
 .offer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1044,12 +1034,12 @@ input, textarea, select, button {
 .offer-card {
   width: 100%;
   max-width: 380px;
-  background: #ffffff;
+  background: #18181b;
   border-radius: 20px;
   padding: 32px 24px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid #27272a;
   position: relative;
 }
 
@@ -1061,7 +1051,7 @@ input, textarea, select, button {
 .offer-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #ffffff;
   margin-bottom: 8px;
 }
 

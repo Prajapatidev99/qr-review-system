@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { businessAPI, scanAPI, feedbackAPI, suggestionsAPI } from '../../lib/api';
 import { t, LANGUAGES } from '../../lib/constants';
+import { Testimonial } from '../../components/ui/testimonial-card';
 import {
   Star, Copy, Check, ExternalLink, MessageCircle,
   Phone, MapPin, X, Gift, ChevronRight, RefreshCw, Sparkles
@@ -77,10 +78,8 @@ const copyThenOpen = (text, url) => {
   const copyPromise = copyToClipboard(text);
 
   if (url) {
-    // Give the clipboard 600ms to settle, then open
-    setTimeout(() => {
-      window.open(url, '_blank');
-    }, 600);
+    // Opening synchronously keeps browsers from treating it as a popup.
+    window.open(url, '_blank', 'noopener,noreferrer');
   }
 
   return copyPromise;
@@ -100,29 +99,48 @@ export default function ReviewPage() {
   const [scanId, setScanId] = useState(null);
   const [phase, setPhase] = useState('rating'); // rating | positive | negative | thanks
   const [suggestions, setSuggestions] = useState([]);
+  const [suggestionState, setSuggestionState] = useState('idle'); // idle | loading | ready | error
+  const [suggestionSource, setSuggestionSource] = useState('');
   const [selectedSuggestion, setSelectedSuggestion] = useState('');
   const [copied, setCopied] = useState(false);
   const [showOffer, setShowOffer] = useState(false);
   const [refreshingSuggestions, setRefreshingSuggestions] = useState(false);
 
-  // Generate / Refresh brand-new unique review suggestions
-  const handleRefreshSuggestions = async () => {
-    setRefreshingSuggestions(true);
+  const loadSuggestions = useCallback(async (requestedLanguage = lang, showRefreshState = false) => {
+    if (!business) return;
+
+    setSuggestionState('loading');
+    setSuggestions([]);
+    setSelectedSuggestion('');
+    setCopied(false);
+    if (showRefreshState) setRefreshingSuggestions(true);
+
     try {
       const category = business?.category || 'general';
-      const res = await suggestionsAPI.getRandom(category, lang, {
+      const res = await suggestionsAPI.getRandom(category, requestedLanguage, {
         count: 5,
         businessName: business?.name || '',
         random: Math.random().toString(36).substring(7),
       });
-      setSuggestions(res.data.suggestions || []);
-      setSelectedSuggestion('');
-      toast.success('Generated new review choices! ✨');
-    } catch (e) {
-      toast.error('Could not refresh reviews');
+      const nextSuggestions = res.data.suggestions || [];
+      setSuggestions(nextSuggestions);
+      setSuggestionSource(res.data.source || '');
+      setSuggestionState(nextSuggestions.length ? 'ready' : 'error');
+      if (showRefreshState && nextSuggestions.length) toast.success('New review drafts are ready.');
+    } catch {
+      setSuggestionState('error');
+      if (showRefreshState) toast.error('Could not refresh review drafts.');
     } finally {
-      setRefreshingSuggestions(false);
+      if (showRefreshState) setRefreshingSuggestions(false);
     }
+  }, [business, lang]);
+
+  // Generate brand-new review drafts without losing the selected language.
+  const handleRefreshSuggestions = () => loadSuggestions(lang, true);
+
+  const handleLanguageChange = (nextLanguage) => {
+    setLang(nextLanguage);
+    if (phase === 'positive') loadSuggestions(nextLanguage, false);
   };
 
   // Feedback form
@@ -179,23 +197,14 @@ export default function ReviewPage() {
     }
 
     if (value >= 4) {
-      // Positive flow — load AI-tailored suggestions
+      // Positive flow — load tailored, editable review drafts.
       setPhase('positive');
-      try {
-        const category = business?.category || 'general';
-        const res = await suggestionsAPI.getRandom(category, lang, {
-          count: 5,
-          businessName: business?.name || '',
-        });
-        setSuggestions(res.data.suggestions || []);
-      } catch (e) {
-        setSuggestions([]);
-      }
+      loadSuggestions(lang, false);
     } else {
       // Negative flow — show feedback form
       setPhase('negative');
     }
-  }, [scanId, business, lang]);
+  }, [scanId, business, lang, loadSuggestions]);
 
   // Handle selecting a review suggestion — auto-copy and open Google Review link
   const handleSelectSuggestion = async (s) => {
@@ -312,7 +321,7 @@ export default function ReviewPage() {
           <button
             key={l.code}
             className={`lang-btn ${lang === l.code ? 'active' : ''}`}
-            onClick={() => setLang(l.code)}
+            onClick={() => handleLanguageChange(l.code)}
           >
             {l.short}
           </button>
@@ -335,33 +344,33 @@ export default function ReviewPage() {
           {phase === 'rating' && (
             <>
               <p className="review-subtitle">{t('rating_title', lang)}</p>
-              <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: 4 }}>
+              <p style={{ fontSize: '0.8rem', color: '#71717a', marginTop: 4 }}>
                 {t('tap_stars', lang)}
               </p>
             </>
           )}
           {phase === 'positive' && (
             <>
-              <p className="review-subtitle" style={{ color: '#059669', fontWeight: 600 }}>
+              <p className="review-subtitle" style={{ color: '#fbbf24', fontWeight: 600 }}>
                 {t('positive_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: '#a1a1aa', marginTop: 4 }}>
                 {t('positive_subtitle', lang)}
               </p>
             </>
           )}
           {phase === 'negative' && (
             <>
-              <p className="review-subtitle" style={{ fontWeight: 600, color: '#e11d48' }}>
+              <p className="review-subtitle" style={{ fontWeight: 600, color: '#f87171' }}>
                 {t('negative_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: '#64748b', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: '#a1a1aa', marginTop: 4 }}>
                 {t('negative_subtitle', lang)}
               </p>
             </>
           )}
           {phase === 'thanks' && (
-            <p className="review-subtitle" style={{ color: '#059669', fontWeight: 600 }}>
+            <p className="review-subtitle" style={{ color: '#34d399', fontWeight: 600 }}>
               {t('feedback_thanks', lang)}
             </p>
           )}
@@ -419,7 +428,7 @@ export default function ReviewPage() {
             {/* AI badge + Refresh */}
             <div className="review-toolbar">
               <span className="ai-badge">
-                <Sparkles size={12} /> AI Generated Reviews
+                <Sparkles size={12} /> {suggestionSource === 'gemini' ? 'AI-assisted drafts' : 'Review drafts'}
               </span>
               <button
                 className="refresh-btn"
@@ -432,7 +441,7 @@ export default function ReviewPage() {
             </div>
 
             {/* Shimmer loading state */}
-            {suggestions.length === 0 && (
+            {suggestionState === 'loading' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[1, 2, 3].map((i) => (
                   <div key={i} className="shimmer-card" style={{ animationDelay: `${i * 0.2}s` }}></div>
@@ -440,21 +449,45 @@ export default function ReviewPage() {
               </div>
             )}
 
-            {suggestions.length > 0 && (
+            {suggestionState === 'error' && (
+              <div className="suggestion-error" role="status">
+                <p>We could not load review drafts right now.</p>
+                <button type="button" className="refresh-btn" onClick={handleRefreshSuggestions}>
+                  Try again
+                </button>
+              </div>
+            )}
+
+            {suggestionState === 'ready' && suggestions.length > 0 && (
               <>
                 <p className="suggestion-heading">
                   {t('pick_suggestion', lang)}
                 </p>
+                <p className="suggestion-helper">Choose a draft, then personalize it so it reflects your experience.</p>
                 <div className="suggestion-list">
                   {suggestions.map((s, i) => (
-                    <div
+                    <Testimonial
                       key={i}
-                      className={`suggestion-item ${selectedSuggestion === s ? 'selected' : ''}`}
+                      className="suggestion-item"
+                      selected={selectedSuggestion === s}
+                      name="Your review"
+                      role="Editable draft"
+                      company={business.name}
+                      testimonial={s}
+                      rating={rating}
+                      tabIndex={0}
+                      interactiveRole="button"
+                      aria-pressed={selectedSuggestion === s}
+                      aria-label={`Select review draft ${i + 1}`}
                       onClick={() => handleSelectSuggestion(s)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          handleSelectSuggestion(s);
+                        }
+                      }}
                     >
-                      <div className="suggestion-radio"></div>
-                      <span className="suggestion-text">{s}</span>
-                    </div>
+                    </Testimonial>
                   ))}
                 </div>
 
@@ -630,4 +663,3 @@ export default function ReviewPage() {
     </div>
   );
 }
-

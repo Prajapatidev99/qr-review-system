@@ -4,7 +4,7 @@ const { register, login, getMe, changePassword, forgotPassword, resetPassword } 
 const { auth, superAdminOnly } = require('../middleware/auth');
 const { authLimiter } = require('../middleware/rateLimiter');
 
-router.post('/register', auth, superAdminOnly, register);
+router.post('/register', authLimiter, register);
 router.post('/login', authLimiter, login);
 router.get('/me', auth, getMe);
 router.put('/change-password', auth, changePassword);

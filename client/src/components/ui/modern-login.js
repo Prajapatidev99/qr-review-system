@@ -184,6 +184,29 @@ export default function Component() {
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup' | 'forgot' | 'reset'
   const [name, setName] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedEmail = localStorage.getItem('qr_remembered_email');
+      if (savedEmail) {
+        setEmail(savedEmail);
+        setRememberMe(true);
+      }
+    }
+  }, []);
+
+  const saveRememberSession = (token, adminData) => {
+    const maxAge = rememberMe ? 2592000 : 86400; // 30 days vs 1 day
+    localStorage.setItem('qr_admin_token', token);
+    localStorage.setItem('qr_admin_user', JSON.stringify(adminData));
+    document.cookie = `qr_admin_token=${token}; path=/; max-age=${maxAge}; SameSite=Lax`;
+    if (rememberMe) {
+      localStorage.setItem('qr_remembered_email', email);
+    } else {
+      localStorage.removeItem('qr_remembered_email');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -196,10 +219,7 @@ export default function Component() {
           return;
         }
         const res = await authAPI.register({ name, email, password });
-        const token = res.data.token;
-        localStorage.setItem('qr_admin_token', token);
-        localStorage.setItem('qr_admin_user', JSON.stringify(res.data.admin));
-        document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+        saveRememberSession(res.data.token, res.data.admin);
         toast.success('Account created successfully!');
         window.location.href = '/admin';
       } else if (authMode === 'forgot') {
@@ -231,10 +251,7 @@ export default function Component() {
           return;
         }
         const res = await authAPI.login({ email, password });
-        const token = res.data.token;
-        localStorage.setItem('qr_admin_token', token);
-        localStorage.setItem('qr_admin_user', JSON.stringify(res.data.admin));
-        document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
+        saveRememberSession(res.data.token, res.data.admin);
         toast.success('Signed in successfully!');
         window.location.href = '/admin';
       }
@@ -347,6 +364,21 @@ export default function Component() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+              </div>
+            )}
+
+            {(authMode === 'login' || authMode === 'signup') && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, textAlign: 'left', width: '100%', marginTop: '0.1rem' }}>
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  style={{ accentColor: '#10b981', width: 15, height: 15, cursor: 'pointer' }}
+                />
+                <label htmlFor="rememberMe" style={{ fontSize: '0.78rem', color: '#aaa', cursor: 'pointer', userSelect: 'none' }}>
+                  Remember me on this device
+                </label>
               </div>
             )}
 

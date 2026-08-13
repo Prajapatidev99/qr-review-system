@@ -10,52 +10,80 @@ import {
   Phone, MapPin, X, Gift, ChevronRight, RefreshCw, Sparkles
 } from 'lucide-react';
 
-// Universal cross-browser copy helper (works on iOS, Android, Windows, Mac, HTTP, HTTPS)
+// ─── Bullet-proof cross-platform clipboard helper ───────────────────────────
+// Works on: iOS Safari / WKWebView, Android Chrome, Desktop Chrome/Firefox/Edge/Safari
+// Works over: HTTPS, HTTP (localhost), and in-app browsers
 const copyToClipboard = async (text) => {
   if (!text) return false;
-  let success = false;
 
-  // 1. Modern API (HTTPS)
-  if (typeof navigator !== 'undefined' && navigator.clipboard && navigator.clipboard.writeText) {
+  // Strategy 1 — ClipboardItem API (most reliable on iOS Safari 13.4+)
+  // This is the ONLY method that works reliably inside iOS Safari's
+  // strict user-gesture clipboard security model.
+  if (typeof ClipboardItem !== 'undefined' && navigator?.clipboard?.write) {
+    try {
+      const blob = new Blob([text], { type: 'text/plain' });
+      const item = new ClipboardItem({ 'text/plain': blob });
+      await navigator.clipboard.write([item]);
+      return true;
+    } catch (_) { /* fall through */ }
+  }
+
+  // Strategy 2 — navigator.clipboard.writeText (HTTPS only, desktop browsers)
+  if (navigator?.clipboard?.writeText) {
     try {
       await navigator.clipboard.writeText(text);
-      success = true;
-    } catch (e) {
-      success = false;
-    }
+      return true;
+    } catch (_) { /* fall through */ }
   }
 
-  // 2. Universal ExecCommand fallback (iOS, Android, HTTP, legacy webviews)
-  if (!success && typeof document !== 'undefined') {
+  // Strategy 3 — Invisible textarea + execCommand (HTTP, Android WebView, legacy)
+  if (typeof document !== 'undefined') {
     try {
-      const textArea = document.createElement('textarea');
-      textArea.value = text;
-      textArea.style.position = 'fixed';
-      textArea.style.top = '0';
-      textArea.style.left = '-9999px';
-      textArea.style.opacity = '0';
-      textArea.setAttribute('readonly', '');
-      document.body.appendChild(textArea);
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      // Must be on-screen for iOS — position off-viewport but visible
+      ta.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0.01;';
+      ta.setAttribute('readonly', '');            // prevent keyboard flash on mobile
+      ta.setAttribute('contenteditable', 'true'); // needed for some iOS webviews
+      document.body.appendChild(ta);
 
-      if (navigator.userAgent.match(/ipad|iphone|ipod/i)) {
+      const isIOS = /ipad|iphone|ipod/i.test(navigator.userAgent);
+      if (isIOS) {
+        // iOS requires range-based selection, not .select()
         const range = document.createRange();
-        range.selectNodeContents(textArea);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        textArea.setSelectionRange(0, 999999);
+        range.selectNodeContents(ta);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        ta.setSelectionRange(0, text.length); // double-ensure
       } else {
-        textArea.select();
+        ta.focus();
+        ta.select();
       }
 
-      success = document.execCommand('copy');
-      document.body.removeChild(textArea);
-    } catch (e) {
-      success = false;
-    }
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) return true;
+    } catch (_) { /* fall through */ }
   }
 
-  return success;
+  return false;
+};
+
+// Helper: copy text, then open a URL after a short delay so the clipboard
+// write is fully committed before the browser switches tabs / contexts.
+const copyThenOpen = (text, url) => {
+  // Start with a synchronous copy attempt so it runs within the user gesture
+  const copyPromise = copyToClipboard(text);
+
+  if (url) {
+    // Give the clipboard 600ms to settle, then open
+    setTimeout(() => {
+      window.open(url, '_blank');
+    }, 600);
+  }
+
+  return copyPromise;
 };
 
 export default function ReviewPage() {
@@ -170,42 +198,48 @@ export default function ReviewPage() {
   }, [scanId, business, lang]);
 
   // Handle selecting a review suggestion — auto-copy and open Google Review link
-  const handleSelectSuggestion = (s) => {
+  const handleSelectSuggestion = async (s) => {
     setSelectedSuggestion(s);
 
-    // 1. Synchronous copy attempt (prevents browser popup blocker)
-    copyToClipboard(s);
-    setCopied(true);
-    toast.success('Review Copied! 📋 Just tap & hold on Google to Paste ✨', { duration: 5000 });
+    // Copy text first, then open Google after a small delay so the
+    // clipboard write completes before the browser switches context.
+    const ok = await copyThenOpen(s, business?.googleReviewLink);
 
-    if (scanId) {
-      scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => {});
-      scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
+    if (ok) {
+      setCopied(true);
+      toast.success('Review Copied! 📋 Just tap & hold on Google to Paste ✨', { duration: 5000 });
+    } else {
+      // Clipboard write failed — show the text so user can copy manually
+      toast('Tap "Copy Review" button below, then paste on Google', { icon: '📝', duration: 5000 });
     }
 
-    // 2. Open Google Review link synchronously
-    if (business?.googleReviewLink) {
-      window.open(business.googleReviewLink, '_blank');
+    if (scanId) {
+      scanAPI.recordAction(scanId, { action: 'copied_review' }).catch(() => { });
+      scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => { });
     }
   };
 
   // Copy review text manually
-  const handleCopy = (e) => {
+  const handleCopy = async (e) => {
     if (e) e.preventDefault();
     if (!selectedSuggestion) {
       toast.error('Please select a review first');
       return;
     }
-    copyToClipboard(selectedSuggestion);
-    setCopied(true);
-    toast.success('Review Copied! 📋 Long-press on Google to Paste');
-    setTimeout(() => setCopied(false), 4000);
+    const ok = await copyToClipboard(selectedSuggestion);
+    if (ok) {
+      setCopied(true);
+      toast.success('Review Copied! 📋 Long-press on Google to Paste');
+      setTimeout(() => setCopied(false), 4000);
+    } else {
+      toast.error('Copy failed — please select the text manually');
+    }
   };
 
   // Handle Google review click
   const handleGoogleClick = () => {
     if (scanId) {
-      scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => {});
+      scanAPI.recordAction(scanId, { action: 'clicked_google' }).catch(() => { });
     }
   };
 
@@ -225,7 +259,7 @@ export default function ReviewPage() {
         ...feedbackForm,
       });
       if (scanId) {
-        scanAPI.recordAction(scanId, { action: 'submitted_feedback' }).catch(() => {});
+        scanAPI.recordAction(scanId, { action: 'submitted_feedback' }).catch(() => { });
       }
       setPhase('thanks');
       toast.success(t('feedback_thanks', lang));
@@ -236,11 +270,24 @@ export default function ReviewPage() {
     }
   };
 
+  // Compute current step for the progress indicator
+  const currentStep = phase === 'rating' ? 1 : (phase === 'positive' ? 2 : phase === 'thanks' ? 3 : 2);
+
+  // Google icon SVG component (reused in multiple places)
+  const GoogleIcon = () => (
+    <svg className="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+    </svg>
+  );
+
   // ─── Render ─────────────────────────────────────────────
   if (loading) {
     return (
       <div className="review-page" style={{ justifyContent: 'center' }}>
-        <div className="spinner" style={{ borderTopColor: 'white' }}></div>
+        <div className="spinner" style={{ borderTopColor: '#8b5cf6' }}></div>
       </div>
     );
   }
@@ -249,9 +296,9 @@ export default function ReviewPage() {
     return (
       <div className="review-page" style={{ justifyContent: 'center' }}>
         <div className="review-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '3rem', marginBottom: 16 }}>🔍</div>
+          <div style={{ fontSize: '3.5rem', marginBottom: 16 }}>🔍</div>
           <h2 className="review-title">Business Not Found</h2>
-          <p className="review-subtitle">This review page doesn't exist or has been deactivated.</p>
+          <p className="review-subtitle">This review page doesn&#39;t exist or has been deactivated.</p>
         </div>
       </div>
     );
@@ -278,7 +325,7 @@ export default function ReviewPage() {
         <div className="review-header">
           <div className="review-logo">
             {business.logo ? (
-              <img src={business.logo} alt={business.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--radius-lg)' }} />
+              <img src={business.logo} alt={business.name} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '22px' }} />
             ) : (
               business.name.charAt(0).toUpperCase()
             )}
@@ -288,17 +335,17 @@ export default function ReviewPage() {
           {phase === 'rating' && (
             <>
               <p className="review-subtitle">{t('rating_title', lang)}</p>
-              <p style={{ fontSize: '0.8rem', color: 'var(--gray-400)', marginTop: 4 }}>
+              <p style={{ fontSize: '0.78rem', color: 'rgba(148,163,184,0.6)', marginTop: 6 }}>
                 {t('tap_stars', lang)}
               </p>
             </>
           )}
           {phase === 'positive' && (
             <>
-              <p className="review-subtitle" style={{ color: 'var(--emerald-600)', fontWeight: 600 }}>
+              <p className="review-subtitle" style={{ color: '#6ee7b7', fontWeight: 600 }}>
                 {t('positive_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.7)', marginTop: 4 }}>
                 {t('positive_subtitle', lang)}
               </p>
             </>
@@ -308,19 +355,41 @@ export default function ReviewPage() {
               <p className="review-subtitle" style={{ fontWeight: 600 }}>
                 {t('negative_title', lang)}
               </p>
-              <p style={{ fontSize: '0.85rem', color: 'var(--gray-500)', marginTop: 4 }}>
+              <p style={{ fontSize: '0.85rem', color: 'rgba(148,163,184,0.7)', marginTop: 4 }}>
                 {t('negative_subtitle', lang)}
               </p>
             </>
           )}
           {phase === 'thanks' && (
-            <>
-              <p className="review-subtitle" style={{ color: 'var(--emerald-600)', fontWeight: 600 }}>
-                {t('feedback_thanks', lang)}
-              </p>
-            </>
+            <p className="review-subtitle" style={{ color: '#6ee7b7', fontWeight: 600 }}>
+              {t('feedback_thanks', lang)}
+            </p>
           )}
         </div>
+
+        {/* Step Progress Indicator */}
+        {phase !== 'negative' && phase !== 'thanks' && (
+          <div className="step-progress">
+            <div style={{ textAlign: 'center' }}>
+              <div className={`step-dot ${currentStep === 1 ? 'active' : currentStep > 1 ? 'completed' : 'inactive'}`}>
+                {currentStep > 1 ? '✓' : '1'}
+              </div>
+              <div className="step-label">Rate</div>
+            </div>
+            <div className={`step-line ${currentStep > 1 ? 'active' : ''}`}></div>
+            <div style={{ textAlign: 'center' }}>
+              <div className={`step-dot ${currentStep === 2 ? 'active' : currentStep > 2 ? 'completed' : 'inactive'}`}>
+                {currentStep > 2 ? '✓' : '2'}
+              </div>
+              <div className="step-label">Pick</div>
+            </div>
+            <div className={`step-line ${currentStep > 2 ? 'active' : ''}`}></div>
+            <div style={{ textAlign: 'center' }}>
+              <div className={`step-dot ${currentStep === 3 ? 'active' : 'inactive'}`}>3</div>
+              <div className="step-label">Post</div>
+            </div>
+          </div>
+        )}
 
         {/* Star Rating */}
         <div className="star-rating">
@@ -347,26 +416,33 @@ export default function ReviewPage() {
         {/* ── POSITIVE FLOW ── */}
         {phase === 'positive' && (
           <div className="animate-fade-in-up">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, flexWrap: 'wrap', gap: 6 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span className="badge badge-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', fontSize: '0.75rem' }}>
-                  <Sparkles size={12} /> AI Tailored Reviews
-                </span>
-              </div>
+            {/* AI badge + Refresh */}
+            <div className="review-toolbar">
+              <span className="ai-badge">
+                <Sparkles size={12} /> AI Generated Reviews
+              </span>
               <button
-                className="btn btn-ghost btn-sm"
+                className="refresh-btn"
                 onClick={handleRefreshSuggestions}
                 disabled={refreshingSuggestions}
-                style={{ fontSize: '0.8rem', padding: '4px 8px', color: 'var(--primary-600)' }}
               >
-                <RefreshCw size={13} className={refreshingSuggestions ? 'spin' : ''} style={{ animation: refreshingSuggestions ? 'spin 1s linear infinite' : 'none' }} />
-                {refreshingSuggestions ? 'Generating...' : 'Refresh Reviews'}
+                <RefreshCw size={13} style={{ animation: refreshingSuggestions ? 'spin 1s linear infinite' : 'none' }} />
+                {refreshingSuggestions ? 'Generating...' : 'Refresh'}
               </button>
             </div>
 
+            {/* Shimmer loading state */}
+            {suggestions.length === 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="shimmer-card" style={{ animationDelay: `${i * 0.2}s` }}></div>
+                ))}
+              </div>
+            )}
+
             {suggestions.length > 0 && (
               <>
-                <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--gray-600)', marginBottom: 10 }}>
+                <p className="suggestion-heading">
                   {t('pick_suggestion', lang)}
                 </p>
                 <div className="suggestion-list">
@@ -383,12 +459,9 @@ export default function ReviewPage() {
                 </div>
 
                 {copied && (
-                  <div style={{
-                    background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46',
-                    padding: '10px 14px', borderRadius: 10, fontSize: '0.82rem', fontWeight: 600,
-                    marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8
-                  }}>
-                    <span>📋 <strong>Copied to Clipboard!</strong> Long-press (tap & hold) the text box on Google to <strong>Paste</strong>.</span>
+                  <div className="copied-banner">
+                    <span>📋</span>
+                    <span><strong>Copied!</strong> Long-press the text box on Google to <strong>Paste</strong>.</span>
                   </div>
                 )}
 
@@ -403,22 +476,17 @@ export default function ReviewPage() {
               </>
             )}
 
-            {/* Google Review Button — Always visible (policy compliant) */}
+            {/* Google Review Button — Pulses when review is copied */}
             <a
               href={business.googleReviewLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="google-review-btn"
+              className={`google-review-btn ${copied ? 'pulse-glow' : ''}`}
               onClick={handleGoogleClick}
             >
-              <svg className="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
+              <GoogleIcon />
               {t('write_google_review', lang)}
-              <ExternalLink size={16} style={{ opacity: 0.5 }} />
+              <ExternalLink size={15} style={{ opacity: 0.4 }} />
             </a>
           </div>
         )}
@@ -465,7 +533,7 @@ export default function ReviewPage() {
               </button>
             </form>
 
-            {/* Google Review — Always available (policy compliant) */}
+            {/* Google Review — Always available */}
             <div className="feedback-divider">{t('also_review', lang)}</div>
             <a
               href={business.googleReviewLink}
@@ -474,40 +542,29 @@ export default function ReviewPage() {
               className="google-review-btn"
               onClick={handleGoogleClick}
             >
-              <svg className="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
+              <GoogleIcon />
               {t('write_google_review', lang)}
-              <ExternalLink size={16} style={{ opacity: 0.5 }} />
+              <ExternalLink size={15} style={{ opacity: 0.4 }} />
             </a>
           </div>
         )}
 
         {/* ── THANK YOU ── */}
         {phase === 'thanks' && (
-          <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: '20px 0' }}>
-            <div style={{ fontSize: '3.5rem', marginBottom: 12 }}>🙏</div>
-            <p style={{ color: 'var(--gray-500)', fontSize: '0.95rem' }}>
+          <div className="animate-fade-in-up" style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div className="thanks-emoji">🙏</div>
+            <p style={{ color: 'rgba(148,163,184,0.8)', fontSize: '0.95rem', lineHeight: 1.5 }}>
               {t('feedback_thanks', lang)}
             </p>
-            {/* Still show Google review option */}
             <a
               href={business.googleReviewLink}
               target="_blank"
               rel="noopener noreferrer"
               className="google-review-btn"
-              style={{ marginTop: 20 }}
+              style={{ marginTop: 24 }}
               onClick={handleGoogleClick}
             >
-              <svg className="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
+              <GoogleIcon />
               {t('write_google_review', lang)}
             </a>
           </div>
@@ -573,3 +630,4 @@ export default function ReviewPage() {
     </div>
   );
 }
+

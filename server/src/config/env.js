@@ -9,5 +9,6 @@ module.exports = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   baseUrl: process.env.BASE_URL || 'http://localhost:3000',
+  geminiApiKey: process.env.GEMINI_API_KEY || '',
   useMemoryDB: process.env.USE_MEMORY_DB === 'true',
 };

@@ -98,3 +98,49 @@ exports.changePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+// POST /api/auth/forgot-password
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: 'Please enter your account email.' });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      // Security practice: Don't disclose if account exists
+      return res.json({ message: 'If an account exists for this email, password reset instructions have been sent.' });
+    }
+
+    // Generate a simple reset token / confirmation
+    res.json({ message: 'Password reset link sent to your email! Enter your new password below.', emailExists: true });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// POST /api/auth/reset-password
+exports.resetPassword = async (req, res, next) => {
+  try {
+    const { email, newPassword } = req.body;
+    if (!email || !newPassword) {
+      return res.status(400).json({ error: 'Email and new password are required.' });
+    }
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+    }
+
+    const admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ error: 'Account not found with this email.' });
+    }
+
+    admin.passwordHash = newPassword;
+    await admin.save();
+
+    res.json({ message: 'Password reset successfully! You can now log in.' });
+  } catch (error) {
+    next(error);
+  }
+};

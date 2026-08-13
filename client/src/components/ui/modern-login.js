@@ -181,18 +181,20 @@ export default function Component() {
     };
   }, []);
 
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup' | 'forgot' | 'reset'
   const [name, setName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || (isSignUp && !name)) {
-      toast.error('Please fill in all required fields');
-      return;
-    }
     setLoading(true);
     try {
-      if (isSignUp) {
+      if (authMode === 'signup') {
+        if (!name || !email || !password) {
+          toast.error('Please fill in all required fields');
+          setLoading(false);
+          return;
+        }
         const res = await authAPI.register({ name, email, password });
         const token = res.data.token;
         localStorage.setItem('qr_admin_token', token);
@@ -200,7 +202,34 @@ export default function Component() {
         document.cookie = `qr_admin_token=${token}; path=/; max-age=604800; SameSite=Lax`;
         toast.success('Account created successfully!');
         window.location.href = '/admin';
+      } else if (authMode === 'forgot') {
+        if (!email) {
+          toast.error('Please enter your email address');
+          setLoading(false);
+          return;
+        }
+        const res = await authAPI.forgotPassword({ email });
+        toast.success(res.data.message || 'Password reset requested!');
+        if (res.data.emailExists) {
+          setAuthMode('reset');
+        }
+      } else if (authMode === 'reset') {
+        if (!email || !newPassword) {
+          toast.error('Please enter email and new password');
+          setLoading(false);
+          return;
+        }
+        const res = await authAPI.resetPassword({ email, newPassword });
+        toast.success(res.data.message || 'Password reset successful!');
+        setAuthMode('login');
+        setPassword('');
+        setNewPassword('');
       } else {
+        if (!email || !password) {
+          toast.error('Please enter email and password');
+          setLoading(false);
+          return;
+        }
         const res = await authAPI.login({ email, password });
         const token = res.data.token;
         localStorage.setItem('qr_admin_token', token);
@@ -252,14 +281,20 @@ export default function Component() {
         <div style={{ width: "100%", maxWidth: 360, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
           {Logo}
           <h1 style={{ fontSize: "1.35rem", fontWeight: 600, marginBottom: "0.25rem", letterSpacing: "-0.025em" }}>
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+            {authMode === 'signup' && 'Create your account'}
+            {authMode === 'login' && 'Welcome back'}
+            {authMode === 'forgot' && 'Reset your password'}
+            {authMode === 'reset' && 'Set new password'}
           </h1>
           <p style={{ fontSize: "0.85rem", color: "#b0b0b0", marginBottom: "1.25rem", lineHeight: 1.5 }}>
-            {isSignUp ? 'Sign up to start growing your Google reviews.' : 'Sign in to manage your QR Review dashboard.'}
+            {authMode === 'signup' && 'Sign up to start growing your Google reviews.'}
+            {authMode === 'login' && 'Sign in to manage your QR Review dashboard.'}
+            {authMode === 'forgot' && 'Enter your email address and we will send password reset instructions.'}
+            {authMode === 'reset' && 'Enter a new password for your account below.'}
           </p>
 
           <form onSubmit={handleSubmit} style={{ width: "100%", display: "flex", flexDirection: "column", gap: "0.85rem" }}>
-            {isSignUp && (
+            {authMode === 'signup' && (
               <div style={{ textAlign: "left", width: "100%" }}>
                 <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Full Name</label>
                 <input
@@ -274,30 +309,61 @@ export default function Component() {
               </div>
             )}
 
-            <div style={{ textAlign: "left", width: "100%" }}>
-              <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Email Address</label>
-              <input
-                style={inputStyle}
-                type="email"
-                placeholder="you@business.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoFocus={!isSignUp}
-              />
-            </div>
+            {(authMode === 'login' || authMode === 'signup' || authMode === 'forgot' || authMode === 'reset') && (
+              <div style={{ textAlign: "left", width: "100%" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Email Address</label>
+                <input
+                  style={inputStyle}
+                  type="email"
+                  placeholder="you@business.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={authMode === 'reset'}
+                  autoFocus={authMode !== 'signup'}
+                />
+              </div>
+            )}
 
-            <div style={{ textAlign: "left", width: "100%" }}>
-              <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>Password</label>
-              <input
-                style={inputStyle}
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
+            {(authMode === 'login' || authMode === 'signup') && (
+              <div style={{ textAlign: "left", width: "100%" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.35rem" }}>
+                  <label style={{ fontSize: "0.75rem", color: "#888", fontWeight: 500 }}>Password</label>
+                  {authMode === 'login' && (
+                    <button
+                      type="button"
+                      onClick={() => setAuthMode('forgot')}
+                      style={{ background: 'none', border: 'none', color: '#10b981', fontSize: '0.75rem', cursor: 'pointer', padding: 0 }}
+                    >
+                      Forgot password?
+                    </button>
+                  )}
+                </div>
+                <input
+                  style={inputStyle}
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+            )}
+
+            {authMode === 'reset' && (
+              <div style={{ textAlign: "left", width: "100%" }}>
+                <label style={{ display: "block", fontSize: "0.75rem", color: "#888", marginBottom: "0.35rem", fontWeight: 500 }}>New Password</label>
+                <input
+                  style={inputStyle}
+                  type="password"
+                  placeholder="At least 6 characters"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+            )}
 
             <button
               type="submit"
@@ -309,18 +375,53 @@ export default function Component() {
                 boxShadow: "0 4px 20px rgba(16, 185, 129, 0.4)", transition: "all 0.2s ease"
               }}
             >
-              {loading ? (isSignUp ? 'Creating Account...' : 'Signing in...') : (isSignUp ? 'Create Free Account' : 'Sign In with Email')}
+              {loading ? (
+                authMode === 'signup' ? 'Creating Account...' :
+                authMode === 'forgot' ? 'Sending Link...' :
+                authMode === 'reset' ? 'Updating Password...' : 'Signing in...'
+              ) : (
+                authMode === 'signup' ? 'Create Free Account' :
+                authMode === 'forgot' ? 'Send Password Reset Link' :
+                authMode === 'reset' ? 'Save New Password' : 'Sign In with Email'
+              )}
             </button>
 
-            <div style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#999' }}>
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-              <button
-                type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
-                style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 600, cursor: 'pointer', padding: 0 }}
-              >
-                {isSignUp ? 'Sign In' : 'Sign Up Free'}
-              </button>
+            <div style={{ marginTop: '0.85rem', fontSize: '0.82rem', color: '#999', display: 'flex', gap: 12, justifyContent: 'center' }}>
+              {authMode === 'login' && (
+                <>
+                  <span>Don't have an account?</span>
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode('signup')}
+                    style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                  >
+                    Sign Up Free
+                  </button>
+                </>
+              )}
+
+              {authMode === 'signup' && (
+                <>
+                  <span>Already have an account?</span>
+                  <button
+                    type="button"
+                    onClick={() => setAuthMode('login')}
+                    style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                  >
+                    Sign In
+                  </button>
+                </>
+              )}
+
+              {(authMode === 'forgot' || authMode === 'reset') && (
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('login')}
+                  style={{ background: 'none', border: 'none', color: '#10b981', fontWeight: 600, cursor: 'pointer', padding: 0 }}
+                >
+                  ← Back to Sign In
+                </button>
+              )}
             </div>
           </form>
         </div>
